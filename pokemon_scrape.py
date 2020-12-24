@@ -11,11 +11,22 @@ pd.set_option('display.max_columns', None)
 
 class PokedexData:
     def __init__(self, overwrite_results_path=False):
+        """
+        Args:
+            overwrite_results_path: <str> optional argument on whether to overwrite stored csv results
+        """
         self.url = r'https://pokemondb.net/pokedex/all'
         self.overwrite_results_path = overwrite_results_path
 
     def get_pokedex_data(self):
+        """
+        Function that interacts with the webpage and cleans/formats the data into a pandas dataframe
+
+        Returns:
+            pokedex_df: <pd.DataFrame> dataframe containing pokemon stat information
+        """
         # TODO add a check for successful response
+        # todo add proper doc strings
         webpage = requests.get(self.url)
         soup = BeautifulSoup(webpage.content, 'html.parser')
         pokedex_uncleaned = soup.findAll('tr')
@@ -45,6 +56,9 @@ class PokedexData:
         return pokedex_df
 
     def __call__(self):
+        """
+        Calls the webscraper and writes results to csv based on self.overwrite_results_path
+        """
         pokedex_df = self.get_pokedex_data()
         print(pokedex_df.head())
 
