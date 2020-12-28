@@ -25,9 +25,11 @@ class PokedexData:
         Returns:
             pokedex_df: <pd.DataFrame> dataframe containing pokemon stat information
         """
-        # TODO add a check for successful response
-        # todo add proper doc strings
         webpage = requests.get(self.url)
+
+        if webpage.status_code != 200:
+            raise Exception('Connection to webpage UNSUCCESSFUL')
+
         soup = BeautifulSoup(webpage.content, 'html.parser')
         pokedex_uncleaned = soup.findAll('tr')
 
@@ -71,5 +73,5 @@ if __name__ == '__main__':
     mfs_path = os.path.join(str(Path(__file__).parents[0]), 'mfs')
     overwrite_results_path = os.path.join(mfs_path, 'pokedex_data.csv')
 
-    x = PokedexData(overwrite_results_path=overwrite_results_path)
+    x = PokedexData(overwrite_results_path=False)
     x()
