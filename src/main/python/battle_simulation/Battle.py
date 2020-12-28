@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from pathlib import Path
 from battle_simulation import constants as const
+import copy
 
 
 class Battle:
@@ -26,10 +27,21 @@ class Battle:
             else:
                 self.Pokemon2.use_move(self.Pokemon1)
                 self.Pokemon1.use_move(self.Pokemon2)
+        winner = self.Pokemon1.name if self.Pokemon1.hp > 0 else self.Pokemon2.name
+        return winner
 
 
-def experiment_winner():
-    pass
+def experiment_winner(Battle, num_battles, name_expected_winner):
+    if name_expected_winner not in [Battle.Pokemon1.name, Battle.Pokemon2.name]:
+        raise Exception('Given expected winner name not involved in given battle.')
+
+    successful_wins = 0
+    for i in range(num_battles):
+        new_battle = copy.deepcopy(Battle)
+        if new_battle.execute_battle() == name_expected_winner:
+            successful_wins += 1
+
+    return 'Probability of {0} winning: {1}'.format(name_expected_winner, successful_wins / num_battles)
 
 
 if __name__ == '__main__':
@@ -47,4 +59,6 @@ if __name__ == '__main__':
     Mew = Pokemon('Mew', pokemon_df, Mew_moveset)
 
     battle = Battle(Mewtwo, Mew)
-    battle.execute_battle()
+
+    # todo better control of the console outputs
+    print(experiment_winner(battle, 1000, 'Mewtwo'))
