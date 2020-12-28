@@ -9,12 +9,14 @@ class Pokemon:
 
     def __init__(self, name, pokemon_info_df, moveset):
         """
-
         Args:
-            name:
-            pokemon_info_df:
+            name: <float> Pokemon name
+            pokemon_info_df: <pd.DataFrame> containing the Pokemon base stat information
             moveset: <dict> of the moveset, can only contain damage causing moves currently.  4 moves max.
-            {1: {'Confusion': {'power':50, 'accuracy':100}}}
+
+            Example of moveset dict:
+                {1: {'Confusion': {const.POW: 50, const.ACC: 100}}, 2: {'Pound': {const.POW: 40, const.ACC: 100}},
+                3: {'Mega Punch': {const.POW: 80, const.ACC: 85}}, 4: {'Psychic': {const.POW: 90, const.ACC: 100}}}
         """
         self.name = name
         self.hp = pokemon_info_df.loc[name, const.HP]
@@ -48,12 +50,8 @@ class Pokemon:
 
     def use_move(self, other_pokemon):
         """
-
         Args:
-            other_pokemon:
-
-        Returns:
-
+            other_pokemon: <Pokemon> to use the move against
         """
         # todo need to account for move accuracy.  Right now, everything is just 100%
         # choose random move to use

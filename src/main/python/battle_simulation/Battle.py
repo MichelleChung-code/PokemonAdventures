@@ -10,15 +10,17 @@ class Battle:
 
     def __init__(self, Pokemon1, Pokemon2):
         """
-
         Args:
-            Pokemon1: <Pokemon>
-            Pokemon2: <Pokemon>
+            Pokemon1: <Pokemon> first Pokemon
+            Pokemon2: <Pokemon> second Pokemon
         """
         self.Pokemon1 = Pokemon1
         self.Pokemon2 = Pokemon2
 
     def execute_battle(self):
+        """
+        Runs the turn based auto-battle, randomized moves
+        """
         print('Battle started between: {0} and {1}'.format(self.Pokemon1.name, self.Pokemon2.name))
         while self.Pokemon1.hp > 0 and self.Pokemon2.hp > 0:
             if self.Pokemon1.speed >= self.Pokemon2.speed:
@@ -32,6 +34,14 @@ class Battle:
 
 
 def experiment_winner(Battle, num_battles, name_expected_winner):
+    """
+    Args:
+        Battle: <Battle> Battle instance to evaluate against
+        num_battles: <int> number of battles to run to calculate probability
+        name_expected_winner: <str> name of the Pokemon to calculate its probability of winnning
+
+    Returns: <float> Probability for the expected winner to win the battle.
+    """
     if name_expected_winner not in [Battle.Pokemon1.name, Battle.Pokemon2.name]:
         raise Exception('Given expected winner name not involved in given battle.')
 
