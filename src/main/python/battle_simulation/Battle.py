@@ -4,6 +4,7 @@ import pandas as pd
 from pathlib import Path
 from battle_simulation import constants as const
 import copy
+import json
 
 
 class Battle:
@@ -55,16 +56,18 @@ def experiment_winner(Battle, num_battles, name_expected_winner):
 
 
 if __name__ == '__main__':
-    mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs', 'pokedex_data.csv')
-    pokemon_df = pd.read_csv(mfs_path, index_col=2)
+    mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs')
+    pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'), index_col=2)
     pokemon_df.drop('Unnamed: 0', axis=1, inplace=True)
-    # todo maybe put movesets in a JSON
-    Mewtwo_moveset = {1: {'Confusion': {const.POW: 50, const.ACC: 100}}, 2: {'Psywave': {const.POW: 1, const.ACC: 80}},
-                      3: {'Psybeam': {const.POW: 65, const.ACC: 100}}, 4: {'Psychic': {const.POW: 90, const.ACC: 100}}}
+
+    moveset_json = os.path.join(mfs_path, 'moveset.json')
+    with open(moveset_json) as json_file:
+        moveset_data = json.load(json_file)
+
+    Mewtwo_moveset = moveset_data['Mewtwo']
     Mewtwo = Pokemon('Mewtwo', pokemon_df, Mewtwo_moveset)
 
-    Mew_moveset = {1: {'Confusion': {const.POW: 50, const.ACC: 100}}, 2: {'Pound': {const.POW: 40, const.ACC: 100}},
-                   3: {'Mega Punch': {const.POW: 80, const.ACC: 85}}, 4: {'Psychic': {const.POW: 90, const.ACC: 100}}}
+    Mew_moveset = moveset_data['Mew']
 
     Mew = Pokemon('Mew', pokemon_df, Mew_moveset)
 

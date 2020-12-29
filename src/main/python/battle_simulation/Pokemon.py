@@ -56,7 +56,7 @@ class Pokemon:
         # Assume that move accuracy is capped at 100%
 
         # choose random move to use
-        move_dict = self.moveset[random.randint(1, 4)]  # {'Confusion': {'power':50, 'accuracy':100}}
+        move_dict = self.moveset[str(random.randint(1, 4))]  # {'Confusion': {'power':50, 'accuracy':100}}
         move_name = list(move_dict.keys())[0]
         print('{name} used {move_name}!'.format(name=self.name, move_name=move_name))
 
