@@ -53,9 +53,18 @@ class Pokemon:
         Args:
             other_pokemon: <Pokemon> to use the move against
         """
-        # todo need to account for move accuracy.  Right now, everything is just 100%
+        # Assume that move accuracy is capped at 100%
+
         # choose random move to use
         move_dict = self.moveset[random.randint(1, 4)]  # {'Confusion': {'power':50, 'accuracy':100}}
         move_name = list(move_dict.keys())[0]
         print('{name} used {move_name}!'.format(name=self.name, move_name=move_name))
-        other_pokemon.take_damage(self, move_dict[move_name][const.POW])
+
+        # Assume that move accuracy is capped at 100%
+        if move_dict[move_name][const.ACC] == 100:
+            other_pokemon.take_damage(self, move_dict[move_name][const.POW])
+        else:
+            if random.randrange(0, 100) < move_dict[move_name][const.ACC]:
+                other_pokemon.take_damage(self, move_dict[move_name][const.POW])
+            else:
+                print('{name} missed.'.format(name=self.name))
