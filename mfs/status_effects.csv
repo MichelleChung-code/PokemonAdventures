@@ -1,0 +1,9 @@
+status,effect_1,effect_2,min_turn_length,max_turn_length
+paralyzed,SkipTurn_75,Speed_50,inf,inf
+poisoned,Damage_6.25,,inf,inf
+badly poisoned,DamageIncr_6.25,,inf,inf
+burned,Damage_12.5,Attack_50,inf,inf
+frozen,SkipTurn_100,,2,5
+confused,DamageChance_50,,1,4
+infatuated,DamageChance_50,,1,4
+leech seed,Damage_6.25,OppHpGain,inf,inf

@@ -19,4 +19,17 @@ FROZEN = 'frozen'
 FLINCH = 'flinch'  # might need special text here or sounds weird
 CONFUSED = 'confused'
 INFATUATED = 'infatuated'
-LEECH_SEED = 'leech seed' # text could be the same as flinch
+LEECH_SEED = 'leech seed'  # text could be the same as flinch
+
+# effects
+DAMAGE_CHANCE = 'DamageChance'
+DAMAGE_PERC_MAX_HP = 'Damage'
+DAMAGE_PERC_MAX_HP_INC = 'DamageIncr'
+SKIP_TURN = 'SkipTurn'
+OPP_HP_GAIN = 'OppHpGain'
+
+# column names of status_effects.csv
+EFFECT_1 = 'effect_1'
+EFFECT_2 = 'effect_2'
+MIN_TURN = 'min_turn_length'
+MAX_TURN = 'max_turn_length'
