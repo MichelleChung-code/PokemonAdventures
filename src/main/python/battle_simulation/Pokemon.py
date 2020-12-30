@@ -34,6 +34,8 @@ class Pokemon:
             other_pokemon: <Pokemon> that current is battling against.  Needed for the leech seed effect.
         """
         # Assume can only be inflicted by 1 effect at a time
+
+        # todo add condition to not allow being affected with other condition, right now will just update to new condition
         # If effected with inf length status condition, cannot be affected with new condition
 
         # todo add unittests for status conditions
@@ -49,16 +51,23 @@ class Pokemon:
             self.status_effect = None
             self.status_effect_turn = 0
 
-        effect_1 = self.status_effect_info.loc[self.status_effect, const.EFFECT_1].split('_')
-        effect_2 = self.status_effect_info.loc[self.status_effect, const.EFFECT_2].split('_')
+        print('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
+        effect_1 = self.status_effect_info.loc[self.status_effect, const.EFFECT_1]
+        effect_2 = self.status_effect_info.loc[self.status_effect, const.EFFECT_2]
+
+        effect_1 = effect_1.split('_') if isinstance(effect_1, str) else effect_1
+        effect_2 = effect_2.split('_') if isinstance(effect_1, str) else effect_2
 
         damage_from_effect = 0
 
         # todo think about whether there is a better way to organize this than multiple if statements
         for effect in [effect_1, effect_2]:
-            if effect == [np.NaN]:
+            if not isinstance(effect, str): # np.NaN value
                 continue
-            elif effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
+            else:
+                effect[-1] = int(effect[-1])
+
+            if effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
                 self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
                 self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
             elif effect[0] == const.DAMAGE_PERC_MAX_HP:
@@ -98,6 +107,10 @@ class Pokemon:
             other_pokemon: <Pokemon> Pokemon that is inflicting damage on current one
             move_damage: <int> Power factor of the move that the other Pokemon is using to inflict damage on current one
         """
+        # Apply status condition
+        if self.status_effect is not None:
+            self.apply_status_effect(other_pokemon)
+
         # assume equal contributions
         # from move power: 0.5 * (move_power/100) * 100
         damage = max((0.5 * move_damage) + (0.5 * (other_pokemon.attack - self.defense)),
@@ -117,7 +130,6 @@ class Pokemon:
             other_pokemon: <Pokemon> to use the move against
         """
         # Assume that move accuracy is capped at 100%
-
         # choose random move to use
         move_dict = self.moveset[str(random.randint(1, 4))]  # {'Confusion': {'power':50, 'accuracy':100}}
         move_name = list(move_dict.keys())[0]
@@ -125,9 +137,15 @@ class Pokemon:
 
         # Assume that move accuracy is capped at 100%
         if move_dict[move_name][const.ACC] == 100:
-            other_pokemon.take_damage(self, move_dict[move_name][const.POW])
+            if move_dict[move_name][const.STATUS_EFFECT]:
+                other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
+            else:
+                other_pokemon.take_damage(self, move_dict[move_name][const.POW])
         else:
             if random.randrange(0, 100) < move_dict[move_name][const.ACC]:
-                other_pokemon.take_damage(self, move_dict[move_name][const.POW])
+                if move_dict[move_name][const.STATUS_EFFECT]:
+                    other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
+                else:
+                    other_pokemon.take_damage(self, move_dict[move_name][const.POW])
             else:
                 print('{name} missed.'.format(name=self.name))
