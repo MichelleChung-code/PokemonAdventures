@@ -60,16 +60,18 @@ if __name__ == '__main__':
     pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'), index_col=2)
     pokemon_df.drop('Unnamed: 0', axis=1, inplace=True)
 
+    status_effect_df = pd.read_csv(os.path.join(mfs_path, 'status_effects.csv'), index_col=0)
+
     moveset_json = os.path.join(mfs_path, 'moveset.json')
     with open(moveset_json) as json_file:
         moveset_data = json.load(json_file)
 
     Mewtwo_moveset = moveset_data['Mewtwo']
-    Mewtwo = Pokemon('Mewtwo', pokemon_df, Mewtwo_moveset)
+    Mewtwo = Pokemon('Mewtwo', pokemon_df, Mewtwo_moveset, status_effect_df)
 
     Mew_moveset = moveset_data['Mew']
 
-    Mew = Pokemon('Mew', pokemon_df, Mew_moveset)
+    Mew = Pokemon('Mew', pokemon_df, Mew_moveset, status_effect_df)
 
     battle = Battle(Mewtwo, Mew)
 
