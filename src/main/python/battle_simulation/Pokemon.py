@@ -30,6 +30,8 @@ class Pokemon:
 
     def apply_status_effect(self, other_pokemon):
         """
+        Apply existing status effect on current pokemon.
+
         Args:
             other_pokemon: <Pokemon> that current is battling against.  Needed for the leech seed effect.
         """
@@ -137,7 +139,7 @@ class Pokemon:
 
         # Assume that move accuracy is capped at 100%
         if move_dict[move_name][const.ACC] == 100:
-            if move_dict[move_name][const.STATUS_EFFECT]:
+            if move_dict[move_name][const.STATUS_EFFECT]: # apply status effect moves 
                 other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
             else:
                 other_pokemon.take_damage(self, move_dict[move_name][const.POW])
