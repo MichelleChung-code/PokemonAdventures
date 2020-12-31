@@ -141,6 +141,7 @@ class Pokemon:
         """
         Args:
             other_pokemon: <Pokemon> to use the move against
+            chosen_move: <int> overwrites the move choice to use.  If False, randomly select a move in the moveset. 
         """
         # Assume that move accuracy is capped at 100%
         # choose random move to use unless chosen_move specified
@@ -197,7 +198,7 @@ class PokemonUnitTests(unittest.TestCase):
 
         self.dummy_mon = Pokemon('Mew', pokemon_df, moveset_data['Mew'], status_effect_df)
 
-    #todo need to add unittests for all the status effects
+    # todo need to add unittests for all the status effects
     def test_status_effect_skip_turn(self):
         # test that frozen pokemon move did not effect other one, i.e. turn was skipped
         dummy_mon_1 = copy.deepcopy(self.dummy_mon)
