@@ -27,11 +27,11 @@ class Battle:
         while self.Pokemon1.hp > 0 and self.Pokemon2.hp > 0:
             if self.Pokemon1.speed >= self.Pokemon2.speed:
                 self.Pokemon1.use_move(self.Pokemon2)
-                if self.Pokemon2.hp > 0:
+                if self.Pokemon2.hp > 0:  # if Pokemon2 has already fainted
                     self.Pokemon2.use_move(self.Pokemon1)
             else:
                 self.Pokemon2.use_move(self.Pokemon1)
-                if self.Pokemon1.hp > 0:
+                if self.Pokemon1.hp > 0:  # todo think of a better way to do this check
                     self.Pokemon1.use_move(self.Pokemon2)
         winner = self.Pokemon1.name if self.Pokemon1.hp > 0 else self.Pokemon2.name
         return winner
@@ -91,5 +91,4 @@ if __name__ == '__main__':
 
     battle = Battle(Mewtwo, Mew)
 
-    # todo better control of the console outputs
     print(experiment_winner(battle, 1000, 'Mewtwo'))
