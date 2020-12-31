@@ -9,4 +9,9 @@ def battle_log_msg(msg):
     logging.info('>>> {}'.format(msg))
 
 def unittest_failure_msg(msg):
+    """
+    Sets up the message format for when unittests fail.
+    Args:
+        msg: <str> message to throw when unittests fail
+    """
     return 'Unexpected Behaviour: {}'.format(msg)
