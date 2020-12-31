@@ -1,8 +1,6 @@
-import pandas as pd
 import battle_simulation.constants as const
 import random
-import numpy as np
-
+from battle_simulation.battle_common import battle_log_msg
 
 class Pokemon:
 
@@ -49,11 +47,11 @@ class Pokemon:
             raise Exception("Max and min turn inputs either need to be both 'inf' or neither 'inf'")
 
         if self.status_effect_turn == max_turn:
-            print('{name} recovered from {status_name}'.format(name=self.name, status_name=self.status_effect))
+            battle_log_msg('{name} recovered from {status_name}'.format(name=self.name, status_name=self.status_effect))
             self.status_effect = None
             self.status_effect_turn = 0
 
-        print('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
+        battle_log_msg('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
         effect_1 = self.status_effect_info.loc[self.status_effect, const.EFFECT_1]
         effect_2 = self.status_effect_info.loc[self.status_effect, const.EFFECT_2]
 
@@ -64,7 +62,7 @@ class Pokemon:
 
         # todo think about whether there is a better way to organize this than multiple if statements
         for effect in [effect_1, effect_2]:
-            if not isinstance(effect, str): # np.NaN value
+            if not isinstance(effect, str):  # np.NaN value
                 continue
             else:
                 effect[-1] = int(effect[-1])
@@ -85,7 +83,7 @@ class Pokemon:
                 damage_from_effect = (self.max_hp * (effect[-1] / 100) * self.status_effect_turn)
             elif effect[0] == const.OPP_HP_GAIN:  # currently this only happens for leech seed effect
                 other_pokemon.hp += damage_from_effect
-                print('{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
+                battle_log_msg('{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
                                                                                                    status_name=self.status_effect,
                                                                                                    other_pokemon=other_pokemon.name,
                                                                                                    hp=damage_from_effect))
@@ -93,7 +91,7 @@ class Pokemon:
                 raise NotImplemented
 
         if damage_from_effect != 0:
-            print('{name} is {status_name} and lost {damage} HP.'.format(name=self.name,
+            battle_log_msg('{name} is {status_name} and lost {damage} HP.'.format(name=self.name,
                                                                          status_name=self.status_effect,
                                                                          damage=damage_from_effect))
 
@@ -121,10 +119,10 @@ class Pokemon:
         self.hp = max(self.hp - damage, 0)
 
         if self.hp == 0:
-            print('{name} has fainted.'.format(name=self.name))
-            print('{other_name} is the winner.'.format(other_name=other_pokemon.name))
+            battle_log_msg('{name} has fainted.'.format(name=self.name))
+            battle_log_msg('{other_name} is the winner.'.format(other_name=other_pokemon.name))
         else:
-            print('{name} HP is now {hp}.'.format(name=self.name, hp=self.hp))
+            battle_log_msg('{name} HP is now {hp}.'.format(name=self.name, hp=self.hp))
 
     def use_move(self, other_pokemon):
         """
@@ -135,11 +133,11 @@ class Pokemon:
         # choose random move to use
         move_dict = self.moveset[str(random.randint(1, 4))]  # {'Confusion': {'power':50, 'accuracy':100}}
         move_name = list(move_dict.keys())[0]
-        print('{name} used {move_name}!'.format(name=self.name, move_name=move_name))
+        battle_log_msg('{name} used {move_name}!'.format(name=self.name, move_name=move_name))
 
         # Assume that move accuracy is capped at 100%
         if move_dict[move_name][const.ACC] == 100:
-            if move_dict[move_name][const.STATUS_EFFECT]: # apply status effect moves 
+            if move_dict[move_name][const.STATUS_EFFECT]:  # apply status effect moves
                 other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
             else:
                 other_pokemon.take_damage(self, move_dict[move_name][const.POW])
@@ -150,4 +148,4 @@ class Pokemon:
                 else:
                     other_pokemon.take_damage(self, move_dict[move_name][const.POW])
             else:
-                print('{name} missed.'.format(name=self.name))
+                battle_log_msg('{name} missed.'.format(name=self.name))
