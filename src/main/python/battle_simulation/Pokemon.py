@@ -1,6 +1,13 @@
 import battle_simulation.constants as const
 import random
-from battle_simulation.battle_common import battle_log_msg
+from battle_simulation.battle_common import battle_log_msg, unittest_failure_msg
+import unittest
+import os
+from pathlib import Path
+import pandas as pd
+import json
+import copy
+
 
 class Pokemon:
 
@@ -51,7 +58,8 @@ class Pokemon:
             self.status_effect = None
             self.status_effect_turn = 0
 
-        battle_log_msg('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
+        if self.status_effect not in [const.FROZEN, const.PARALYZED]:  # logging handled during move use for these ones
+            battle_log_msg('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
         effect_1 = self.status_effect_info.loc[self.status_effect, const.EFFECT_1]
         effect_2 = self.status_effect_info.loc[self.status_effect, const.EFFECT_2]
 
@@ -68,8 +76,10 @@ class Pokemon:
                 effect[-1] = int(effect[-1])
 
             if effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
-                self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
-                self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
+                # only apply the first time that the status effect takes place
+                if self.status_effect_turn == 0:
+                    self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
+                    self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
             elif effect[0] == const.DAMAGE_PERC_MAX_HP:
                 damage_from_effect = (self.max_hp * (effect[-1] / 100))
                 self.hp -= damage_from_effect
@@ -83,17 +93,20 @@ class Pokemon:
                 damage_from_effect = (self.max_hp * (effect[-1] / 100) * self.status_effect_turn)
             elif effect[0] == const.OPP_HP_GAIN:  # currently this only happens for leech seed effect
                 other_pokemon.hp += damage_from_effect
-                battle_log_msg('{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
-                                                                                                   status_name=self.status_effect,
-                                                                                                   other_pokemon=other_pokemon.name,
-                                                                                                   hp=damage_from_effect))
+                battle_log_msg(
+                    '{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
+                                                                                                 status_name=self.status_effect,
+                                                                                                 other_pokemon=other_pokemon.name,
+                                                                                                 hp=damage_from_effect))
+            elif effect[0] == const.SKIP_TURN:
+                pass  # handled separately
             else:
                 raise NotImplemented
 
         if damage_from_effect != 0:
             battle_log_msg('{name} is {status_name} and lost {damage} HP.'.format(name=self.name,
-                                                                         status_name=self.status_effect,
-                                                                         damage=damage_from_effect))
+                                                                                  status_name=self.status_effect,
+                                                                                  damage=damage_from_effect))
 
         self.status_effect_turn += 1
 
@@ -124,16 +137,37 @@ class Pokemon:
         else:
             battle_log_msg('{name} HP is now {hp}.'.format(name=self.name, hp=self.hp))
 
-    def use_move(self, other_pokemon):
+    def use_move(self, other_pokemon, chosen_move=False):
         """
         Args:
             other_pokemon: <Pokemon> to use the move against
         """
         # Assume that move accuracy is capped at 100%
-        # choose random move to use
-        move_dict = self.moveset[str(random.randint(1, 4))]  # {'Confusion': {'power':50, 'accuracy':100}}
+        # choose random move to use unless chosen_move specified
+
+        if chosen_move:
+            move_dict = self.moveset[str(chosen_move)]
+        else:
+            move_dict = self.moveset[str(random.randint(1, 4))]  # {'Confusion': {'power':50, 'accuracy':100}}
+
         move_name = list(move_dict.keys())[0]
         battle_log_msg('{name} used {move_name}!'.format(name=self.name, move_name=move_name))
+
+        skip_chance_from_status = False
+        if self.status_effect in [const.FROZEN, const.PARALYZED]:  # Skip turn effects
+            battle_log_msg('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
+            skip_chance_from_status = int(
+                self.status_effect_info.loc[self.status_effect, const.EFFECT_1].split('_')[-1])
+            if skip_chance_from_status == 100:
+                battle_log_msg('{name} could not move from being {status_name}!'.format(name=self.name,
+                                                                                        status_name=self.status_effect))
+                return
+
+        if skip_chance_from_status:
+            if random.randrange(0, 100) < skip_chance_from_status:
+                battle_log_msg('{name} could not move from being {status_name}!'.format(name=self.name,
+                                                                                        status_name=self.status_effect))
+                return
 
         # Assume that move accuracy is capped at 100%
         if move_dict[move_name][const.ACC] == 100:
@@ -149,3 +183,31 @@ class Pokemon:
                     other_pokemon.take_damage(self, move_dict[move_name][const.POW])
             else:
                 battle_log_msg('{name} missed.'.format(name=self.name))
+
+
+class PokemonUnitTests(unittest.TestCase):
+    def setUp(self):
+        mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs')
+        pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'), index_col=2)
+        pokemon_df.drop('Unnamed: 0', axis=1, inplace=True)
+        status_effect_df = pd.read_csv(os.path.join(mfs_path, 'status_effects.csv'), index_col=0)
+        moveset_json = os.path.join(mfs_path, 'moveset.json')
+        with open(moveset_json) as json_file:
+            moveset_data = json.load(json_file)
+
+        self.dummy_mon = Pokemon('Mew', pokemon_df, moveset_data['Mew'], status_effect_df)
+
+    #todo need to add unittests for all the status effects
+    def test_status_effect_skip_turn(self):
+        # test that frozen pokemon move did not effect other one, i.e. turn was skipped
+        dummy_mon_1 = copy.deepcopy(self.dummy_mon)
+
+        dummy_move = {'1': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
+        dummy_mon_2 = copy.deepcopy(self.dummy_mon)
+        dummy_mon_2.moveset.update(dummy_move)
+        dummy_mon_2.status_effect = 'frozen'
+
+        dummy_mon_2.use_move(dummy_mon_1, 1)
+
+        self.assertEqual(dummy_mon_1.max_hp, dummy_mon_1.hp,
+                         unittest_failure_msg('pokemon with frozen status still inflicting damage'))
