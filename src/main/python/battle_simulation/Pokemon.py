@@ -73,11 +73,12 @@ class Pokemon:
         damage_from_effect = 0
 
         # todo think about whether there is a better way to organize this than multiple if statements
+        # todo could do a dictionary of functions where the keys are the status effects and the value is functions
         for effect in [effect_1, effect_2]:
-            if not isinstance(effect, str):  # np.NaN value
+            if not isinstance(effect, list):  # np.NaN value
                 continue
             else:
-                effect[-1] = int(effect[-1])
+                effect[-1] = float(effect[-1])
 
             if effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
                 # only apply the first time that the status effect takes place
@@ -124,9 +125,6 @@ class Pokemon:
             other_pokemon: <Pokemon> Pokemon that is inflicting damage on current one
             move_damage: <int> Power factor of the move that the other Pokemon is using to inflict damage on current one
         """
-        # Apply status condition
-        if self.status_effect is not None:
-            self.apply_status_effect(other_pokemon)
 
         # assume equal contributions
         # from move power: 0.5 * (move_power/100) * 100
@@ -147,6 +145,10 @@ class Pokemon:
             other_pokemon: <Pokemon> to use the move against
             chosen_move: <int> overwrites the move choice to use.  If False, randomly select a move in the moveset. 
         """
+        # Apply status condition at the beginning of the current turn
+        if self.status_effect is not None:
+            self.apply_status_effect(other_pokemon)
+
         # Assume that move accuracy is capped at 100%
         # choose random move to use unless chosen_move specified
 
@@ -203,7 +205,7 @@ class PokemonUnitTests(unittest.TestCase):
         self.dummy_mon = Pokemon('Mew', self.pokemon_df, moveset_data['Mew'], self.status_effect_df)
 
     def test_only_4_moves(self):
-        # Test that exception is raised when number of moves in provided moveset is not equal to 4
+        """ Test that exception is raised when number of moves in provided moveset is not equal to 4 """
         dummy_move = {'5': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
         invalid_moveset = copy.deepcopy(self.dummy_mon.moveset)
         invalid_moveset.update(dummy_move)  # invalid since contains 5 moves
@@ -215,7 +217,7 @@ class PokemonUnitTests(unittest.TestCase):
 
     # todo need to add unittests for all the status effects
     def test_status_effect_skip_turn(self):
-        # test that frozen pokemon move did not effect other one, i.e. turn was skipped
+        """ Test that frozen pokemon move did not effect other one, i.e. turn was skipped """
         dummy_mon_1 = copy.deepcopy(self.dummy_mon)
 
         dummy_move = {'1': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
@@ -227,3 +229,21 @@ class PokemonUnitTests(unittest.TestCase):
 
         self.assertEqual(dummy_mon_1.max_hp, dummy_mon_1.hp,
                          unittest_failure_msg('pokemon with frozen status still inflicting damage'))
+
+    def test_status_effect_damage(self):
+        """ Test that 'Damage_' status effect is working """
+        dummy_mon_1 = copy.deepcopy(self.dummy_mon)
+        dummy_mon_2 = copy.deepcopy(self.dummy_mon)
+
+        dummy_mon_1.status_effect = 'poisoned'
+        dummy_move = {'1': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
+        dummy_mon_1.moveset.update(dummy_move)
+
+        # pokemon should be damaged at the beginning of its turn
+        dummy_mon_1.use_move(dummy_mon_2, 1)
+
+        damage_perc = float(self.status_effect_df.loc[dummy_mon_1.status_effect, const.EFFECT_1].split('_')[1])
+
+        damage = (damage_perc / 100) * dummy_mon_1.max_hp
+
+        self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage)
