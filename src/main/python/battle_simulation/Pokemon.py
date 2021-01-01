@@ -82,7 +82,7 @@ class Pokemon:
 
             if effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
                 # only apply the first time that the status effect takes place
-                if self.status_effect_turn == 0:
+                if self.status_effect_turn == 1:
                     self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
                     self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
             elif effect[0] == const.DAMAGE_PERC_MAX_HP:
@@ -96,6 +96,7 @@ class Pokemon:
             elif effect[0] == const.DAMAGE_PERC_MAX_HP_INC:
                 # amount increases per turn that it is in effect
                 damage_from_effect = (self.max_hp * (effect[-1] / 100) * self.status_effect_turn)
+                self.hp -= damage_from_effect
             elif effect[0] == const.OPP_HP_GAIN:  # currently this only happens for leech seed effect
                 other_pokemon.hp += damage_from_effect
                 battle_log_msg(
@@ -112,8 +113,6 @@ class Pokemon:
             battle_log_msg('{name} is {status_name} and lost {damage} HP.'.format(name=self.name,
                                                                                   status_name=self.status_effect,
                                                                                   damage=damage_from_effect))
-
-        self.status_effect_turn += 1
 
     # todo add ability and effects to use status changing moves
     def take_damage(self, other_pokemon, move_damage):
@@ -147,6 +146,7 @@ class Pokemon:
         """
         # Apply status condition at the beginning of the current turn
         if self.status_effect is not None:
+            self.status_effect_turn += 1
             self.apply_status_effect(other_pokemon)
 
         # Assume that move accuracy is capped at 100%
@@ -247,3 +247,21 @@ class PokemonUnitTests(unittest.TestCase):
         damage = (damage_perc / 100) * dummy_mon_1.max_hp
 
         self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage)
+
+    def test_status_effect_damage_increasing(self):
+        """  """
+        dummy_mon_1 = copy.deepcopy(self.dummy_mon)
+        dummy_mon_2 = copy.deepcopy(self.dummy_mon)
+
+        dummy_mon_1.status_effect = 'badly poisoned'
+        dummy_move = {'1': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
+        dummy_mon_1.moveset.update(dummy_move)
+        damage_perc = float(self.status_effect_df.loc[dummy_mon_1.status_effect, const.EFFECT_1].split('_')[1])
+
+        damage = 0
+        for i in range(1, 4):
+            dummy_mon_1.use_move(dummy_mon_2, 1)
+            damage += (damage_perc / 100 * dummy_mon_1.max_hp) * i  # damage increases per turn
+            self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage)  # check damage caused at the end of each turn
+
+    # def test_status_effect_attack_stat(self):
