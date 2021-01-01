@@ -5,8 +5,9 @@ from pathlib import Path
 import logging
 import copy
 import json
-from battle_simulation.battle_common import battle_log_msg
+from battle_simulation.battle_common import battle_log_msg, unittest_failure_msg
 import unittest
+
 
 class Battle:
 
@@ -63,6 +64,7 @@ def experiment_winner(Battle, num_battles, name_expected_winner):
 
     return 'Probability of {0} winning: {1}'.format(name_expected_winner, successful_wins / num_battles)
 
+
 class BattleUnitTests(unittest.TestCase):
     def setUp(self):
         mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs')
@@ -85,8 +87,9 @@ class BattleUnitTests(unittest.TestCase):
 
         Battle(dummy_mon_1, dummy_mon_2).execute_battle()
 
-        self.assertEqual(dummy_mon_1.max_hp, dummy_1_max_hp)
-        self.assertEqual(dummy_mon_2.max_hp, dummy_2_max_hp)
+        self.assertEqual(dummy_mon_1.max_hp, dummy_1_max_hp, unittest_failure_msg('battle has changed pokemon max HP'))
+        self.assertEqual(dummy_mon_2.max_hp, dummy_2_max_hp, unittest_failure_msg('battle has changed pokemon max HP'))
+
 
 if __name__ == '__main__':
     # set up logging

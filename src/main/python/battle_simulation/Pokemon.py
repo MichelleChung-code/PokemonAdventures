@@ -61,9 +61,11 @@ class Pokemon:
             battle_log_msg('{name} recovered from {status_name}'.format(name=self.name, status_name=self.status_effect))
             self.status_effect = None
             self.status_effect_turn = 0
+            return
 
         if self.status_effect not in [const.FROZEN, const.PARALYZED]:  # logging handled during move use for these ones
             battle_log_msg('{name} is {status_name}'.format(name=self.name, status_name=self.status_effect))
+
         effect_1 = self.status_effect_info.loc[self.status_effect, const.EFFECT_1]
         effect_2 = self.status_effect_info.loc[self.status_effect, const.EFFECT_2]
 
