@@ -33,6 +33,10 @@ class Pokemon:
         self.status_effect_turn = 0
         self.status_effect_info = status_effect_df
 
+        # Check that moveset has exactly 4 moves
+        if len(self.moveset.keys()) != 4:
+            raise Exception('{name} moveset does not contain 4 moves.'.format(name=self.name))
+
     def apply_status_effect(self, other_pokemon):
         """
         Apply existing status effect on current pokemon.
@@ -189,14 +193,25 @@ class Pokemon:
 class PokemonUnitTests(unittest.TestCase):
     def setUp(self):
         mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs')
-        pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'), index_col=2)
-        pokemon_df.drop('Unnamed: 0', axis=1, inplace=True)
-        status_effect_df = pd.read_csv(os.path.join(mfs_path, 'status_effects.csv'), index_col=0)
+        self.pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'), index_col=2)
+        self.pokemon_df.drop('Unnamed: 0', axis=1, inplace=True)
+        self.status_effect_df = pd.read_csv(os.path.join(mfs_path, 'status_effects.csv'), index_col=0)
         moveset_json = os.path.join(mfs_path, 'moveset.json')
         with open(moveset_json) as json_file:
             moveset_data = json.load(json_file)
 
-        self.dummy_mon = Pokemon('Mew', pokemon_df, moveset_data['Mew'], status_effect_df)
+        self.dummy_mon = Pokemon('Mew', self.pokemon_df, moveset_data['Mew'], self.status_effect_df)
+
+    def test_only_4_moves(self):
+        # Test that exception is raised when number of moves in provided moveset is not equal to 4
+        dummy_move = {'5': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
+        invalid_moveset = copy.deepcopy(self.dummy_mon.moveset)
+        invalid_moveset.update(dummy_move)  # invalid since contains 5 moves
+        name = 'Mew'
+        with self.assertRaises(Exception) as context:
+            Pokemon(name, self.pokemon_df, invalid_moveset, self.status_effect_df)
+
+        self.assertTrue('{} moveset does not contain 4 moves.'.format(name) in str(context.exception))
 
     # todo need to add unittests for all the status effects
     def test_status_effect_skip_turn(self):
