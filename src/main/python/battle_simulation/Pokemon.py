@@ -68,7 +68,7 @@ class Pokemon:
         effect_2 = self.status_effect_info.loc[self.status_effect, const.EFFECT_2]
 
         effect_1 = effect_1.split('_') if isinstance(effect_1, str) else effect_1
-        effect_2 = effect_2.split('_') if isinstance(effect_1, str) else effect_2
+        effect_2 = effect_2.split('_') if isinstance(effect_2, str) else effect_2
 
         damage_from_effect = 0
 
@@ -213,7 +213,8 @@ class PokemonUnitTests(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             Pokemon(name, self.pokemon_df, invalid_moveset, self.status_effect_df)
 
-        self.assertTrue('{} moveset does not contain 4 moves.'.format(name) in str(context.exception))
+        self.assertTrue('{} moveset does not contain 4 moves.'.format(name) in str(context.exception),
+                        unittest_failure_msg('exception not thrown when moveset does not contain 4 moves'))
 
     # todo need to add unittests for all the status effects
     def test_status_effect_skip_turn(self):
@@ -246,10 +247,11 @@ class PokemonUnitTests(unittest.TestCase):
 
         damage = (damage_perc / 100) * dummy_mon_1.max_hp
 
-        self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage)
+        self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage,
+                         unittest_failure_msg('Damage_ status effect not yielding expected results'))
 
     def test_status_effect_damage_increasing(self):
-        """  """
+        """ Test 'Damage_Incr' statuses i.e. badly poisoned """
         dummy_mon_1 = copy.deepcopy(self.dummy_mon)
         dummy_mon_2 = copy.deepcopy(self.dummy_mon)
 
@@ -262,6 +264,26 @@ class PokemonUnitTests(unittest.TestCase):
         for i in range(1, 4):
             dummy_mon_1.use_move(dummy_mon_2, 1)
             damage += (damage_perc / 100 * dummy_mon_1.max_hp) * i  # damage increases per turn
-            self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage)  # check damage caused at the end of each turn
+            self.assertEqual(dummy_mon_1.hp, dummy_mon_1.max_hp - damage, unittest_failure_msg(
+                'Damage_Incr status effect not yielding expected results'))  # check damage caused at the end of each turn
 
-    # def test_status_effect_attack_stat(self):
+    def test_status_effect_attack_stat(self):
+        """ Test status impacting base attack stat i.e. burned """
+        dummy_mon_1 = copy.deepcopy(self.dummy_mon)
+        dummy_mon_2 = copy.deepcopy(self.dummy_mon)
+
+        dummy_mon_1.status_effect = 'burned'
+        dummy_mon_1_max_attack = dummy_mon_1.attack
+        dummy_move = {'1': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
+        dummy_mon_1.moveset.update(dummy_move)
+
+        stat_decr_perc = float(self.status_effect_df.loc[dummy_mon_1.status_effect, const.EFFECT_2].split('_')[1])
+        dummy_mon_1.use_move(dummy_mon_2, 1)
+
+        self.assertEqual(dummy_mon_1.attack, dummy_mon_1_max_attack - (dummy_mon_1_max_attack * stat_decr_perc / 100),
+                         unittest_failure_msg('attack stat impacting status effect not yielding expected results'))
+
+        # Check that this decrease was only applied during the first turn that the status effect was effective
+        dummy_mon_1.use_move(dummy_mon_2, 1)  # should not impact base attack stat
+        self.assertEqual(dummy_mon_1.attack, dummy_mon_1_max_attack - (dummy_mon_1_max_attack * stat_decr_perc / 100),
+                         unittest_failure_msg('attack stat impacting status effect being applied past the first turn'))
