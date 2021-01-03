@@ -94,7 +94,7 @@ class Pokemon:
             if status_effect_call is None:
                 raise NotImplemented
             elif status_effect_call is False:
-                pass # handled separately outside of this function 
+                pass  # handled separately outside of this function
             elif effect[0] == const.OPP_HP_GAIN:
                 status_effect_call(other_pokemon, damage_from_effect)
             elif effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
@@ -110,26 +110,54 @@ class Pokemon:
                                                                                   damage=damage_from_effect))
 
     def base_attack_speed_stat_status_effect(self, effect):
+        """
+        Applies the status decrease to either speed or attack base stats
+        Args:
+            effect: <list> [base stat to apply to, percentage decrease of base stat to apply]
+            data types are [<str>, <float>]
+        """
         self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
         self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
 
     def damage_max_hp_percent_status_effect(self, effect):
+        """
+        Applies percentage of max hp decrease on current hp
+        Args:
+            effect: <list> [const.DAMAGE_PERC_MAX_HP <str>, percentage to decrease hp by <float>]
+        """
         damage_from_effect = (self.max_hp * (effect[-1] / 100))
         self.hp -= damage_from_effect
 
     def damage_chance_status_effect(self, effect):
+        """
+        Applies 10% max hp decrease on current hp depending on the chance to apply damage given
+        Args:
+            effect: <list> [const.DAMAGE_CHANCE <str>, chance of self-inflicting damage <float>]
+        """
         # assume self-inflicted damage is 10% of max HP
         if random.randrange(0, 100) < effect[-1]:
             damage_from_effect = self.max_hp * 0.1
             self.hp -= damage_from_effect
 
     def damage_max_hp_percent_increasing_status_effect(self, effect):
+        """
+        Applies percentage of max hp damage to current hp.  Each turn the applied damage increases by this amount too.
+        Args:
+            effect: <list> [const.DAMAGE_PERC_MAX_HP_INC <str>, percentage to decrease hp by <float>]
+        """
         # amount increases per turn that it is in effect
         damage_from_effect = (self.max_hp * (effect[-1] / 100) * self.status_effect_turn)
         self.hp -= damage_from_effect
 
     def opponent_gains_hp_status_effect(self, other_pokemon, damage_from_effect):
+        """
+        Applies increase to opponent pokemon HP
+        Args:
+            other_pokemon: <Pokemon> Opponent pokemon to apply HP increase to
+            damage_from_effect: <float> amount of HP to increase opponent HP by
+        """
         other_pokemon.hp += damage_from_effect
+        # also involves logging message
         battle_log_msg(
             '{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
                                                                                          status_name=self.status_effect,
