@@ -70,7 +70,7 @@ class PokedexData:
 
 
 if __name__ == '__main__':
-    mfs_path = os.path.join(str(Path(__file__).parents[0]), 'mfs')
+    mfs_path = os.path.join(str(Path(__file__).parents[0]), '../../../../mfs')
     overwrite_results_path = os.path.join(mfs_path, 'pokedex_data.csv')
 
     x = PokedexData(overwrite_results_path=False)
