@@ -74,47 +74,66 @@ class Pokemon:
 
         damage_from_effect = 0
 
-        # todo think about whether there is a better way to organize this than multiple if statements
-        # todo could do a dictionary of functions where the keys are the status effects and the value is functions
+        status_effect_dict = {const.ATTACK: self.base_attack_speed_stat_status_effect,
+                              const.SPEED: self.base_attack_speed_stat_status_effect,
+                              const.DAMAGE_PERC_MAX_HP: self.damage_max_hp_percent_status_effect,
+                              const.DAMAGE_CHANCE: self.damage_chance_status_effect,
+                              const.DAMAGE_PERC_MAX_HP_INC: self.damage_max_hp_percent_increasing_status_effect,
+                              const.OPP_HP_GAIN: self.opponent_gains_hp_status_effect,
+                              const.SKIP_TURN: False}
+
         for effect in [effect_1, effect_2]:
             if not isinstance(effect, list):  # np.NaN value
                 continue
             else:
                 effect[-1] = float(effect[-1])
 
-            if effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
-                # only apply the first time that the status effect takes place
-                if self.status_effect_turn == 1:
-                    self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
-                    self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
-            elif effect[0] == const.DAMAGE_PERC_MAX_HP:
-                damage_from_effect = (self.max_hp * (effect[-1] / 100))
-                self.hp -= damage_from_effect
-            elif effect[0] == const.DAMAGE_CHANCE:
-                # assume self-inflicted damage is 10% of max HP
-                if random.randrange(0, 100) < effect[-1]:
-                    damage_from_effect = self.max_hp * 0.1
-                    self.hp -= damage_from_effect
-            elif effect[0] == const.DAMAGE_PERC_MAX_HP_INC:
-                # amount increases per turn that it is in effect
-                damage_from_effect = (self.max_hp * (effect[-1] / 100) * self.status_effect_turn)
-                self.hp -= damage_from_effect
-            elif effect[0] == const.OPP_HP_GAIN:  # currently this only happens for leech seed effect
-                other_pokemon.hp += damage_from_effect
-                battle_log_msg(
-                    '{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
-                                                                                                 status_name=self.status_effect,
-                                                                                                 other_pokemon=other_pokemon.name,
-                                                                                                 hp=damage_from_effect))
+            status_effect_call = status_effect_dict.get(effect[0])
+
+            if status_effect_call is None:
+                raise NotImplemented
+            elif effect[0] == const.OPP_HP_GAIN:
+                status_effect_call(other_pokemon, damage_from_effect)
             elif effect[0] == const.SKIP_TURN:
                 pass  # handled separately
+            elif effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
+                # only apply the first time that the status effect takes place
+                if self.status_effect_turn == 1:
+                    status_effect_call(effect)
             else:
-                raise NotImplemented
+                status_effect_call(effect)
 
         if damage_from_effect != 0:
             battle_log_msg('{name} is {status_name} and lost {damage} HP.'.format(name=self.name,
                                                                                   status_name=self.status_effect,
                                                                                   damage=damage_from_effect))
+
+    def base_attack_speed_stat_status_effect(self, effect):
+        self.attack *= (effect[-1] / 100) if effect[0] == const.ATTACK else self.attack
+        self.speed *= (effect[-1] / 100) if effect[0] == const.SPEED else self.speed
+
+    def damage_max_hp_percent_status_effect(self, effect):
+        damage_from_effect = (self.max_hp * (effect[-1] / 100))
+        self.hp -= damage_from_effect
+
+    def damage_chance_status_effect(self, effect):
+        # assume self-inflicted damage is 10% of max HP
+        if random.randrange(0, 100) < effect[-1]:
+            damage_from_effect = self.max_hp * 0.1
+            self.hp -= damage_from_effect
+
+    def damage_max_hp_percent_increasing_status_effect(self, effect):
+        # amount increases per turn that it is in effect
+        damage_from_effect = (self.max_hp * (effect[-1] / 100) * self.status_effect_turn)
+        self.hp -= damage_from_effect
+
+    def opponent_gains_hp_status_effect(self, other_pokemon, damage_from_effect):
+        other_pokemon.hp += damage_from_effect
+        battle_log_msg(
+            '{name} is effected by {status_name}. {other_pokemon} gained {hp} HP'.format(name=self.name,
+                                                                                         status_name=self.status_effect,
+                                                                                         other_pokemon=other_pokemon.name,
+                                                                                         hp=damage_from_effect))
 
     # todo add ability and effects to use status changing moves
     def take_damage(self, other_pokemon, move_damage):
