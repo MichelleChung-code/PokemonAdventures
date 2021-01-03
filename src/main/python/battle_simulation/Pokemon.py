@@ -74,6 +74,7 @@ class Pokemon:
 
         damage_from_effect = 0
 
+        # dictionary value False if the effect is handled elsewhere (not in this function)
         status_effect_dict = {const.ATTACK: self.base_attack_speed_stat_status_effect,
                               const.SPEED: self.base_attack_speed_stat_status_effect,
                               const.DAMAGE_PERC_MAX_HP: self.damage_max_hp_percent_status_effect,
@@ -92,10 +93,10 @@ class Pokemon:
 
             if status_effect_call is None:
                 raise NotImplemented
+            elif status_effect_call is False:
+                pass # handled separately outside of this function 
             elif effect[0] == const.OPP_HP_GAIN:
                 status_effect_call(other_pokemon, damage_from_effect)
-            elif effect[0] == const.SKIP_TURN:
-                pass  # handled separately
             elif effect[0] in [const.ATTACK, const.SPEED]:  # affects base stats
                 # only apply the first time that the status effect takes place
                 if self.status_effect_turn == 1:
