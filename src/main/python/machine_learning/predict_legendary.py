@@ -6,7 +6,10 @@ from imblearn.over_sampling import SMOTE
 import machine_learning.constant as const
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import RFE
+from itertools import compress
 
+# todo this didn't need to be a class, right now it's all just static methods.  Think about this more.
 
 class LegendaryPredictor:
     def __init__(self, pokemon_data_df):
@@ -39,9 +42,28 @@ class LegendaryPredictor:
 
         return pd.DataFrame(columns=X_cols, data=X_os_data), pd.DataFrame(columns=[y_col], data=y_os_data)
 
+    @staticmethod
+    def recursive_feature_elimination(X_os_data, y_os_data):
+        """
+        Use recursive feature elimination to select the best 4 features to use, using logistic regression as the
+        estimator
+
+        Args:
+            X_os_data: <pd.DataFrame> X trained data
+            y_os_data: <pd.DataFrame> y trained data
+
+        Returns: <list> of the chosen features to use resulting from rfe
+
+        """
+        rfe = RFE(LogisticRegression(), n_features_to_select=4)
+        rfe = rfe.fit(X_os_data, y_os_data.values.ravel())
+        chosen_features = list(compress(X_os_data.columns, rfe.support_))
+
+        return chosen_features
+
     def __call__(self):
         X_os_data, y_os_data = LegendaryPredictor.preprocessing(self.pokemon_data_df, const.LEGENDARY)
-
+        rfe_chosen_feature = LegendaryPredictor.recursive_feature_elimination(X_os_data, y_os_data)
         print('test')
 
 
