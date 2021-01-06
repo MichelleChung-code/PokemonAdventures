@@ -68,6 +68,18 @@ class LegendaryPredictor:
 
     @staticmethod
     def run_logistic_model(X_os_data, y_os_data):
+        """
+        Run the logistic regression model and plot ROC curve.
+
+        Args:
+            X_os_data: <pd.DataFrame> X trained data
+            y_os_data: <pd.DataFrame> y trained data
+
+        Returns: <dict> of results, which include:
+            <float> 'acc_on_test_set' accuracy of the test set results
+            <np.Array> 'confusion_matrix' matrix containing information on the number of correct and incorrect
+            predictions
+        """
         model = sm.Logit(y_os_data, X_os_data)
         result = model.fit()
 
@@ -114,7 +126,6 @@ class LegendaryPredictor:
         # only include the chosen features in the actual model
         X_os_data = X_os_data[rfe_chosen_feature]
         logit_model_results = LegendaryPredictor.run_logistic_model(X_os_data, y_os_data)
-
 
 if __name__ == '__main__':
     pokemon_df = pd.read_csv('Pokemon.csv', index_col=1)  # index is pokemon name
