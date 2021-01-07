@@ -6,6 +6,10 @@ DEFENSE = 'Defense'
 SPEED = 'Speed'
 POW = 'power'
 ACC = 'accuracy'
+SP_ATTACK = 'Special_Atk'
+SP_DEFENSE = 'Special_Def'
+ATTRIBUTE = 'attribute'
+VALUE = 'value'
 
 # todo
 # status inflicting conditions
