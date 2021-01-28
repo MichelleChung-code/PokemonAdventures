@@ -2,4 +2,3 @@ test file
 
 test
 
-test
