@@ -1,0 +1,62 @@
+{
+    "Mewtwo": {
+        "1": {
+            "Confusion": {
+                "power": 50,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "2": {
+            "Confuse Ray": {
+                "power": false,
+                "accuracy": 100,
+                "status": "confused"
+            }
+        },
+        "3": {
+            "Psybeam": {
+                "power": 65,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "4": {
+            "Psychic": {
+                "power": 90,
+                "accuracy": 100,
+                "status": false
+            }
+        }
+    },
+    "Mew": {
+        "1": {
+            "Confusion": {
+                "power": 50,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "2": {
+            "Pound": {
+                "power": 40,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "3": {
+            "Mega Punch": {
+                "power": 80,
+                "accuracy": 85,
+                "status": false
+            }
+        },
+        "4": {
+            "Psychic": {
+                "power": 90,
+                "accuracy": 100,
+                "status": false
+            }
+        }
+    }
+}
