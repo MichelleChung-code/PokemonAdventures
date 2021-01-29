@@ -100,6 +100,7 @@ if __name__ == '__main__':
                         level=logging.INFO)
 
     mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs')
+    print(mfs_path)
     pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'), index_col=2)
     pokemon_df.drop('Unnamed: 0', axis=1, inplace=True)
 
