@@ -1,11 +1,11 @@
-from src.main.python.battle_simulation.Pokemon import Pokemon
+from battle_simulation.Pokemon import Pokemon
 import os
 import pandas as pd
 from pathlib import Path
 import logging
 import copy
 import json
-from src.main.python.battle_simulation.battle_common import battle_log_msg, unittest_failure_msg
+from battle_simulation.battle_common import battle_log_msg, unittest_failure_msg
 import unittest
 
 

@@ -1,6 +1,6 @@
-import src.main.python.battle_simulation.constants as const
+import battle_simulation.constants as const
 import random
-from src.main.python.battle_simulation.battle_common import battle_log_msg, unittest_failure_msg
+from battle_simulation.battle_common import battle_log_msg, unittest_failure_msg
 import unittest
 import os
 from pathlib import Path
