@@ -23,7 +23,7 @@ class BattleUnitTests(unittest.TestCase):
         self.dummy_mon_2 = Pokemon('Mewtwo', pokemon_df, moveset_data['Mewtwo'], status_effect_df)
 
     def test_max_hp_remains_same(self):
-        """ Run a battle between the two pokemon and check that max hp does not change """
+        """ Run battle between the two pokemon and check that max hp does not change """
         dummy_mon_1 = copy.deepcopy(self.dummy_mon_1)
         dummy_mon_2 = copy.deepcopy(self.dummy_mon_2)
         dummy_1_max_hp = dummy_mon_1.max_hp
