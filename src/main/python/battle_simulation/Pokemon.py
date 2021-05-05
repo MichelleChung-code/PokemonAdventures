@@ -43,8 +43,6 @@ class Pokemon:
         # todo add condition to not allow being affected with other condition, right now will just update to new condition
         # If effected with inf length status condition, cannot be affected with new condition
 
-        # todo add unittests for status conditions
-
         min_turn = self.status_effect_info.loc[self.status_effect, const.MIN_TURN]
         max_turn = self.status_effect_info.loc[self.status_effect, const.MAX_TURN]
 

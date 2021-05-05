@@ -33,7 +33,6 @@ class PokemonUnitTests(unittest.TestCase):
         self.assertTrue('{} moveset does not contain 4 moves.'.format(name) in str(context.exception),
                         unittest_failure_msg('exception not thrown when moveset does not contain 4 moves'))
 
-    # todo need to add unittests for all the status effects
     def test_status_effect_skip_turn(self):
         """ Test that frozen pokemon move did not effect other one, i.e. turn was skipped """
         dummy_mon_1 = copy.deepcopy(self.dummy_mon)
@@ -104,3 +103,24 @@ class PokemonUnitTests(unittest.TestCase):
         dummy_mon_1.use_move(dummy_mon_2, 1)  # should not impact base attack stat
         self.assertEqual(dummy_mon_1.attack, dummy_mon_1_max_attack - (dummy_mon_1_max_attack * stat_decr_perc / 100),
                          unittest_failure_msg('attack stat impacting status effect being applied past the first turn'))
+
+    def test_status_effect_damage_chance(self):
+        """ Test that 'DamageChance_' status effect is working """
+        dummy_mon_1 = copy.deepcopy(self.dummy_mon)
+        dummy_mon_2 = copy.deepcopy(self.dummy_mon)
+
+        dummy_mon_1.status_effect = 'confused'
+        dummy_move = {'1': {'dummy_move': {'power': 100, 'accuracy': 100, 'status': False}}}
+        dummy_mon_1.moveset.update(dummy_move)
+
+        # pokemon should be damaged at the beginning of its turn
+        dummy_mon_1.use_move(dummy_mon_2, 1)
+
+        # damage chance applies of 10% max HP damage
+        damage = 0.1 * dummy_mon_1.max_hp
+
+        # pokemon has either lost HP or remained the same if it did not take damage
+        res_bool = dummy_mon_1.hp in [dummy_mon_1.max_hp, dummy_mon_1.max_hp - damage]
+
+        self.assertTrue(res_bool, unittest_failure_msg(
+            'DamageChance_ status effect not yielding expected results'))  # check damage caused at the end of each turn
