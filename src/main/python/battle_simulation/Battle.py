@@ -22,19 +22,28 @@ class Battle:
     def execute_battle(self):
         """
         Runs the turn based auto-battle, randomized moves
+
+        Returns: <str> name of winning pokemon
         """
         battle_log_msg('Battle started between: {0} and {1}'.format(self.Pokemon1.name, self.Pokemon2.name))
         while self.Pokemon1.hp > 0 and self.Pokemon2.hp > 0:
-            if self.Pokemon1.speed >= self.Pokemon2.speed:
-                self.Pokemon1.use_move(self.Pokemon2)
-                if self.Pokemon2.hp > 0:  # if Pokemon2 has already fainted
-                    self.Pokemon2.use_move(self.Pokemon1)
-            else:
-                self.Pokemon2.use_move(self.Pokemon1)
-                if self.Pokemon1.hp > 0:  # todo think of a better way to do this check
-                    self.Pokemon1.use_move(self.Pokemon2)
+            self.battle_execute_turn()
+
         winner = self.Pokemon1.name if self.Pokemon1.hp > 0 else self.Pokemon2.name
         return winner
+
+    def battle_execute_turn(self):
+        """
+        Runs one turn of the battle
+        """
+        if self.Pokemon1.speed >= self.Pokemon2.speed:
+            self.Pokemon1.use_move(self.Pokemon2)
+            if self.Pokemon2.hp > 0:  # if Pokemon2 has fainted from the previous move
+                self.Pokemon2.use_move(self.Pokemon1)
+        else:
+            self.Pokemon2.use_move(self.Pokemon1)
+            if self.Pokemon1.hp > 0:
+                self.Pokemon1.use_move(self.Pokemon2)
 
 
 def experiment_winner(Battle, num_battles, name_expected_winner):
@@ -62,6 +71,7 @@ def experiment_winner(Battle, num_battles, name_expected_winner):
         print('Battle #{0} Winner: {1}'.format(i + 1, battle_winner))
 
     return 'Probability of {0} winning: {1}'.format(name_expected_winner, successful_wins / num_battles)
+
 
 if __name__ == '__main__':
     # set up logging
