@@ -38,9 +38,7 @@ class Pokemon:
         Args:
             other_pokemon: <Pokemon> that current is battling against.  Needed for the leech seed effect.
         """
-        # Assume can only be inflicted by 1 effect at a time
-
-        # todo add condition to not allow being affected with other condition, right now will just update to new condition
+        # Can only be inflicted by 1 effect at a time
         # If effected with inf length status condition, cannot be affected with new condition
 
         min_turn = self.status_effect_info.loc[self.status_effect, const.MIN_TURN]
@@ -219,15 +217,26 @@ class Pokemon:
                 return
 
         # Assume that move accuracy is capped at 100%
+        # Apply relevant status effect on other pokemon if applicable
         if move_dict[move_name][const.ACC] == 100:
             if move_dict[move_name][const.STATUS_EFFECT]:  # apply status effect moves
-                other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
+                if other_pokemon.status_effect is None:  # only allow one status effect at a time
+                    other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
+                else:
+                    battle_log_msg('{name} is already {status_name}!'.format(name=other_pokemon.name,
+                                                                                         status_name=other_pokemon.status_effect))
+
             else:
                 other_pokemon.take_damage(self, move_dict[move_name][const.POW])
         else:
             if random.randrange(0, 100) < move_dict[move_name][const.ACC]:
                 if move_dict[move_name][const.STATUS_EFFECT]:
-                    other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
+                    if other_pokemon.status_effect is None:
+                        other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
+                    else:
+                        battle_log_msg('{name} is already {status_name}!'.format(name=other_pokemon.name,
+                                                                                             status_name=other_pokemon.status_effect))
+
                 else:
                     other_pokemon.take_damage(self, move_dict[move_name][const.POW])
             else:
