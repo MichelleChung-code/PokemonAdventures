@@ -1,6 +1,6 @@
 import battle_simulation.constants as const
 import random
-from battle_simulation.battle_common import battle_log_msg
+from battle_simulation.battle_common import battle_log_msg, BattleError
 
 
 class Pokemon:
@@ -193,6 +193,8 @@ class Pokemon:
         # choose random move to use unless chosen_move specified
 
         if chosen_move:
+            if chosen_move not in range(1, 5):
+                raise BattleError('Chosen move must be 1, 2, 3, or 4')
             move_dict = self.moveset[str(chosen_move)]
         else:
             move_dict = self.moveset[str(random.randint(1, 4))]  # {'Confusion': {'power':50, 'accuracy':100}}
@@ -224,7 +226,7 @@ class Pokemon:
                     other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
                 else:
                     battle_log_msg('{name} is already {status_name}!'.format(name=other_pokemon.name,
-                                                                                         status_name=other_pokemon.status_effect))
+                                                                             status_name=other_pokemon.status_effect))
 
             else:
                 other_pokemon.take_damage(self, move_dict[move_name][const.POW])
@@ -235,7 +237,7 @@ class Pokemon:
                         other_pokemon.status_effect = move_dict[move_name][const.STATUS_EFFECT]
                     else:
                         battle_log_msg('{name} is already {status_name}!'.format(name=other_pokemon.name,
-                                                                                             status_name=other_pokemon.status_effect))
+                                                                                 status_name=other_pokemon.status_effect))
 
                 else:
                     other_pokemon.take_damage(self, move_dict[move_name][const.POW])
