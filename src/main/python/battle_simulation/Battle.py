@@ -6,6 +6,7 @@ import logging
 import copy
 import json
 from battle_simulation.battle_common import battle_log_msg
+import random
 
 
 class Battle:
@@ -92,13 +93,15 @@ if __name__ == '__main__':
     with open(moveset_json) as json_file:
         moveset_data = json.load(json_file)
 
+    # First Pokemon
     Mewtwo_moveset = moveset_data['Mewtwo']
     Mewtwo = Pokemon('Mewtwo', pokemon_df, Mewtwo_moveset, status_effect_df)
 
-    Mew_moveset = moveset_data['Mew']
+    # Randomize the second one from available choices from moveset dict
+    second_mon_name = random.choice(list(moveset_data.keys()))
+    second_mon_moveset = moveset_data[second_mon_name]
+    second_pokemon = Pokemon(second_mon_name, pokemon_df, second_mon_moveset, status_effect_df)
 
-    Mew = Pokemon('Mew', pokemon_df, Mew_moveset, status_effect_df)
-
-    battle = Battle(Mewtwo, Mew)
+    battle = Battle(Mewtwo, second_pokemon)
 
     print(experiment_winner(battle, 1000, 'Mewtwo'))
