@@ -7,6 +7,7 @@ import copy
 import json
 from battle_simulation.battle_common import unittest_failure_msg
 import unittest
+import random
 
 
 class BattleUnitTests(unittest.TestCase):
@@ -20,10 +21,18 @@ class BattleUnitTests(unittest.TestCase):
             moveset_data = json.load(json_file)
 
         self.dummy_mon_1 = Pokemon('Mew', pokemon_df, moveset_data['Mew'], status_effect_df)
-        self.dummy_mon_2 = Pokemon('Mewtwo', pokemon_df, moveset_data['Mewtwo'], status_effect_df)
+
+        # Randomize the second one from available choices from moveset dict
+        second_mon_name = random.choice(list(moveset_data.keys()))
+        second_mon_moveset = moveset_data[second_mon_name]
+
+        self.dummy_mon_2 = Pokemon(second_mon_name, pokemon_df, second_mon_moveset, status_effect_df)
 
     def test_max_hp_remains_same(self):
-        """ Run battle between the two pokemon and check that max hp does not change """
+        """
+        Run battle between the two pokemon and check that max hp does not change
+        This also checks that the Battle can run without any technical errors
+        """
         dummy_mon_1 = copy.deepcopy(self.dummy_mon_1)
         dummy_mon_2 = copy.deepcopy(self.dummy_mon_2)
         dummy_1_max_hp = dummy_mon_1.max_hp

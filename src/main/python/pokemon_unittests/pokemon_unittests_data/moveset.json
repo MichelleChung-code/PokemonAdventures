@@ -58,5 +58,95 @@
                 "status": false
             }
         }
+    },
+        "Charizard": {
+        "1": {
+            "Flare Blitz": {
+                "power": 120,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "2": {
+            "Inferno": {
+                "power": 100,
+                "accuracy": 50,
+                "status": false
+            }
+        },
+        "3": {
+            "Fire Spin": {
+                "power": 35,
+                "accuracy": 85,
+                "status": false
+            }
+        },
+        "4": {
+            "Flamethrower": {
+                "power": 90,
+                "accuracy": 100,
+                "status": false
+            }
+        }
+    },
+            "Blastoise": {
+        "1": {
+            "Skull Bash": {
+                "power": 130,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "2": {
+            "Hydro Pump": {
+                "power": 110,
+                "accuracy":80,
+                "status": false
+            }
+        },
+        "3": {
+            "Aqua Tail": {
+                "power": 90,
+                "accuracy": 90,
+                "status": false
+            }
+        },
+        "4": {
+            "Water Pulse": {
+                "power": 60,
+                "accuracy": 100,
+                "status": false
+            }
+        }
+    },
+                "Pikachu": {
+        "1": {
+            "Thunder Wave": {
+                "power": false,
+                "accuracy": 90,
+                "status": "paralyzed"
+            }
+        },
+        "2": {
+            "Thunder": {
+                "power": 110,
+                "accuracy":70,
+                "status": false
+            }
+        },
+        "3": {
+            "Thunderbolt": {
+                "power": 90,
+                "accuracy": 100,
+                "status": false
+            }
+        },
+        "4": {
+            "Slam": {
+                "power": 80,
+                "accuracy": 75,
+                "status": false
+            }
+        }
     }
 }
