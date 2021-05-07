@@ -1,5 +1,9 @@
 import logging
 
+class BattleError(Exception):
+    """An exception class for Battle"""
+    pass
+
 def battle_log_msg(msg):
     """
     Writes INFO level logging within a battle.  For maintaining the same logging style.
