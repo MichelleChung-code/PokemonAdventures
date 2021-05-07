@@ -20,18 +20,48 @@ class Battle:
         self.Pokemon1 = Pokemon1
         self.Pokemon2 = Pokemon2
 
-    def execute_battle(self):
+    def execute_battle(self, user_input=False):
         """
         Runs the turn based auto-battle, randomized moves
+
+        Args:
+            user_input: <bool> if True, allow for user input for Pokemon1 moves.  If False, moves used will be random
 
         Returns: <str> name of winning pokemon
         """
         battle_log_msg('Battle started between: {0} and {1}'.format(self.Pokemon1.name, self.Pokemon2.name))
         while self.Pokemon1.hp > 0 and self.Pokemon2.hp > 0:
-            self.battle_execute_turn()
+            if user_input:
+                self.battle_execute_turn_user_input()
+            else:
+                self.battle_execute_turn()
 
         winner = self.Pokemon1.name if self.Pokemon1.hp > 0 else self.Pokemon2.name
         return winner
+
+    def battle_execute_turn_user_input(self):
+        """
+        Runs one turn of the battle through using user input
+        User pokemon is Pokemon1
+        """
+
+        # print out the move options, only first level of the moveset dictionary
+        user_input_move_options_dict = {k: list(self.Pokemon1.moveset[k].keys())[0] for k in self.Pokemon1.moveset}
+
+        # User choices will be integers 1, 2, 3, or 4
+        user_choice = input("Choose the move that {name} will use from {move_options}: ".format(name=self.Pokemon1.name,
+                                                                                           move_options=user_input_move_options_dict))
+
+        if self.Pokemon1.speed >= self.Pokemon2.speed:
+            self.Pokemon1.use_move(self.Pokemon2, int(user_choice))
+            print('{} was used'.format(user_input_move_options_dict[user_choice]))
+            if self.Pokemon2.hp > 0:  # if Pokemon2 has fainted from the previous move
+                self.Pokemon2.use_move(self.Pokemon1)
+        else:
+            self.Pokemon2.use_move(self.Pokemon1)
+            if self.Pokemon1.hp > 0:
+                self.Pokemon1.use_move(self.Pokemon2, int(user_choice))
+                print('{} was used'.format(user_input_move_options_dict[user_choice]))
 
     def battle_execute_turn(self):
         """
@@ -66,7 +96,7 @@ def experiment_winner(Battle, num_battles, name_expected_winner):
         num_equal_signs = (50 - len(battle_txt)) // 2
         logging.info('=' * num_equal_signs + battle_txt + '=' * num_equal_signs)
         new_battle = copy.deepcopy(Battle)
-        battle_winner = new_battle.execute_battle()
+        battle_winner = new_battle.execute_battle(user_input=False)
         if battle_winner == name_expected_winner:
             successful_wins += 1
         print('Battle #{0} Winner: {1}'.format(i + 1, battle_winner))

@@ -38,7 +38,7 @@ class BattleUnitTests(unittest.TestCase):
         dummy_1_max_hp = dummy_mon_1.max_hp
         dummy_2_max_hp = dummy_mon_2.max_hp
 
-        Battle(dummy_mon_1, dummy_mon_2).execute_battle()
+        Battle(dummy_mon_1, dummy_mon_2).execute_battle(user_input=False)
 
         self.assertEqual(dummy_mon_1.max_hp, dummy_1_max_hp, unittest_failure_msg('battle has changed pokemon max HP'))
         self.assertEqual(dummy_mon_2.max_hp, dummy_2_max_hp, unittest_failure_msg('battle has changed pokemon max HP'))
