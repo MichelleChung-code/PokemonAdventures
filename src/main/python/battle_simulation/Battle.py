@@ -128,6 +128,8 @@ if __name__ == '__main__':
     Mewtwo = Pokemon('Mewtwo', pokemon_df, Mewtwo_moveset, status_effect_df)
 
     # Randomize the second one from available choices from moveset dict
+    # Don't include what was chosen as the first pokemon
+
     second_mon_name = random.choice(list(moveset_data.keys()))
     second_mon_moveset = moveset_data[second_mon_name]
     second_pokemon = Pokemon(second_mon_name, pokemon_df, second_mon_moveset, status_effect_df)
