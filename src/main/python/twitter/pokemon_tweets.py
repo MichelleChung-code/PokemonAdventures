@@ -22,6 +22,16 @@ access_token_secret = data['access_token_secret']
 
 
 def search_for_tweet(search_query, date_since):
+    """
+    Searches for tweets
+
+    Args:
+        search_query: <str> twitter search query
+        date_since: <str> YYYY-MM-DD of when to start looking for tweets
+
+    Returns: <pd.DataFrame> of returned results
+
+    """
     auth = tw.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     api = tw.API(auth, wait_on_rate_limit=True)
@@ -41,8 +51,20 @@ def search_for_tweet(search_query, date_since):
 
 
 def send_email(sender, reciever, email_body, email_subject, file_name):
+    """
+    Sends email using GMAIL server
+
+    Args:
+        sender: <str> gmail address sending the email - ends with @gmail.com
+        reciever: <str> gmail address recieving the email - ends with @gmail.com
+        email_body: <str> email body
+        email_subject: <str> email subject
+        file_name: <str> name of attachment
+    """
     # Create a multipart message
     # Modified from https://djangocentral.com/sending-emails-with-csv-attachment-using-python/
+
+    assert sender.endswith('@gmail.com') and receiver.endswith('@gmail.com')
 
     msg = MIMEMultipart()
     body_part = MIMEText(email_body, 'plain')
@@ -90,5 +112,3 @@ if __name__ == '__main__':
     # remove at end so as to not commit it to Github
     if os.path.exists(result_file_name):
         os.remove(result_file_name)
-
-
