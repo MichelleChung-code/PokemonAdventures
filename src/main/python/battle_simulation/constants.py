@@ -11,6 +11,8 @@ SP_DEFENSE = 'Special_Def'
 ATTRIBUTE = 'attribute'
 VALUE = 'value'
 
+STATS_LS = [HP, ATTACK, DEFENSE, SPEED, SP_ATTACK, SP_DEFENSE]
+
 # todo
 # status inflicting conditions
 # https://pokemon.fandom.com/wiki/Status_Effects
