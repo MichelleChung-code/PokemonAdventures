@@ -17,3 +17,4 @@ class SelectionUnitTests(unittest.TestCase):
         res_ls = sorted(x.select_team(), key=str.lower)
 
         self.assertEqual(res_ls, ['Groudon', 'Regigigas', 'Slaking', 'Zacian', 'Zamazenta', 'Zekrom'])
+        self.assertTrue(len(res_ls) == 6)  # should only contain 6 items
