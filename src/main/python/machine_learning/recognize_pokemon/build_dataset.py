@@ -5,14 +5,15 @@ import shutil
 
 mfs_path = '../../../../../mfs'
 
-dir_path = os.path.join(mfs_path, 'pokemon_images')
+dir_path = os.path.join(mfs_path, 'pokemon_images_original')
 
 if not os.path.exists(dir_path):
     os.makedirs(dir_path)
 
 pokemon_df = pd.read_csv(os.path.join(mfs_path, 'pokedex_data.csv'))
 
-pokemon_names_ls = set(pokemon_df['Name'].to_list())
+# Just the original 151 pokemon
+pokemon_names_ls = pokemon_df['Name'].to_list()[:151]
 
 for name in pokemon_names_ls:
     train_dir = os.path.join(dir_path, 'train')
