@@ -58,6 +58,8 @@ class ImageRecognition:
 
         # get model paths
         file_names = os.listdir(self.model_dir)
+
+        # get the last run model (most accurate one) since accuracy improves per training experiment
         model_path = os.path.join(self.model_dir, sorted([f for f in file_names if f.endswith('.h5')], reverse=True)[0])
         model_json_path = os.path.join(self.model_dir, [f for f in file_names if f.endswith('.json')][0])
 
@@ -92,9 +94,9 @@ if __name__ == '__main__':
     if not os.path.exists(model_output_path):
         os.makedirs(model_output_path)
 
-    # test with McKale's drawn image
+    # test with a previously loaded image
     test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
 
     x = ImageRecognition(image_dir=dir_path, model_dir=model_output_path, test_img_path=test_img_path,
-                         run_stored_model_bool=False)
+                         run_stored_model_bool=True)
     pprint(x())
