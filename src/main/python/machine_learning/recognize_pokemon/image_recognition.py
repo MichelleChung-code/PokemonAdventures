@@ -5,6 +5,7 @@ import glob
 from pathlib import Path
 from pprint import pprint
 import operator
+import json
 
 
 class ImageRecognition:
@@ -28,7 +29,16 @@ class ImageRecognition:
         assert self.test_img_path.endswith(('.png', '.jpg'))
 
         # Number of objects - different possibilities that the image could be in the dataset
-        self.n = len(os.listdir(os.path.join(self.image_dir, 'train')))
+        if run_stored_model_bool:
+            model_json_path = os.path.join(self.model_dir,
+                                           [f for f in os.listdir(self.model_dir) if f.endswith('.json')][0])
+            with open(model_json_path) as json_file:
+                model_json = json.load(json_file)
+
+            self.n = len(model_json.keys())
+        else:
+            assert not isinstance(self.image_dir, bool)
+            self.n = len(os.listdir(os.path.join(self.image_dir, 'train')))
 
     def train_model(self):
         """ Create and train a model using the """
