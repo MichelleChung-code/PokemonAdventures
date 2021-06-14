@@ -1,9 +1,10 @@
 # Who's that pokemon images
-
+mfs/pokemon_images/*
+mfs/pokemon_images_original/*
 
 # Pycharm IDEA files
 .idea/*
-mfs/pokemon_images/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
