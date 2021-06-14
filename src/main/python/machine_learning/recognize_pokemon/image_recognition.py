@@ -2,6 +2,7 @@
 from imageai.Classification.Custom import ClassificationModelTrainer, CustomImageClassification
 import os
 import glob
+from pathlib import Path
 
 
 class ImageRecognition:
@@ -30,7 +31,7 @@ class ImageRecognition:
 
 
 if __name__ == '__main__':
-    mfs_path = '../../../../../mfs'
+    mfs_path = os.path.join(str(Path(__file__).parents[5]), 'mfs')
 
     dir_path = os.path.join(mfs_path, 'pokemon_images')
 
