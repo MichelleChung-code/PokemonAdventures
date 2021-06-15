@@ -41,7 +41,7 @@ class ImageRecognition:
             self.n = len(os.listdir(os.path.join(self.image_dir, 'train')))
 
     def train_model(self):
-        """ Create and train a model using the """
+        """ Create and train a model using the images stored in self.image_dir directory """
         # make sure the output path is clear first
         for f in glob.glob('{}/*'.format(self.model_dir)):
             os.remove(f)
@@ -53,6 +53,7 @@ class ImageRecognition:
                          show_network_summary=True)
 
     def run_stored_model(self):
+        """ Run stored model and evaluate on the image specified in self.test_img_path """
         model_predict = CustomImageClassification()
         model_predict.setModelTypeAsResNet50()
 
@@ -87,15 +88,18 @@ class ImageRecognition:
 if __name__ == '__main__':
     mfs_path = os.path.join(str(Path(__file__).parents[5]), 'mfs')
 
-    dir_path = os.path.join(mfs_path, 'pokemon_images_original')
+    # path for where training and test images are stored
+    dir_path = os.path.join(mfs_path, 'pokemon_images_demo')
 
-    model_output_folder = 'model'
+    # path to where model h5 and json fils are stored/ to be written
+    model_output_folder = 'model_demo'
     model_output_path = os.path.join(str(Path(__file__).parents[0]), model_output_folder)
     if not os.path.exists(model_output_path):
         os.makedirs(model_output_path)
 
-    # test with a previously loaded image
-    test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
+    # test the model with a previously loaded image
+    # this will be the result to return
+    test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charizard.png')
 
     x = ImageRecognition(image_dir=dir_path, model_dir=model_output_path, test_img_path=test_img_path,
                          run_stored_model_bool=True)
