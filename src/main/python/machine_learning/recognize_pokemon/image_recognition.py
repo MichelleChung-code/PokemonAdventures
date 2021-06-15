@@ -5,6 +5,7 @@ import glob
 from pathlib import Path
 from pprint import pprint
 import operator
+import json
 
 
 class ImageRecognition:
@@ -28,7 +29,16 @@ class ImageRecognition:
         assert self.test_img_path.endswith(('.png', '.jpg'))
 
         # Number of objects - different possibilities that the image could be in the dataset
-        self.n = len(os.listdir(os.path.join(self.image_dir, 'train')))
+        if run_stored_model_bool:
+            model_json_path = os.path.join(self.model_dir,
+                                           [f for f in os.listdir(self.model_dir) if f.endswith('.json')][0])
+            with open(model_json_path) as json_file:
+                model_json = json.load(json_file)
+
+            self.n = len(model_json.keys())
+        else:
+            assert not isinstance(self.image_dir, bool)
+            self.n = len(os.listdir(os.path.join(self.image_dir, 'train')))
 
     def train_model(self):
         """ Create and train a model using the """
@@ -39,7 +49,7 @@ class ImageRecognition:
         model = ClassificationModelTrainer()
         model.setModelTypeAsResNet50()
         model.setDataDirectory(self.image_dir, models_subdirectory=self.model_dir, json_subdirectory=self.model_dir)
-        model.trainModel(num_objects=self.n, num_experiments=100, enhance_data=True, batch_size=10,
+        model.trainModel(num_objects=self.n, num_experiments=50, enhance_data=True, batch_size=10,
                          show_network_summary=True)
 
     def run_stored_model(self):
@@ -48,6 +58,8 @@ class ImageRecognition:
 
         # get model paths
         file_names = os.listdir(self.model_dir)
+
+        # get the last run model (most accurate one) since accuracy improves per training experiment
         model_path = os.path.join(self.model_dir, sorted([f for f in file_names if f.endswith('.h5')], reverse=True)[0])
         model_json_path = os.path.join(self.model_dir, [f for f in file_names if f.endswith('.json')][0])
 
@@ -75,14 +87,14 @@ class ImageRecognition:
 if __name__ == '__main__':
     mfs_path = os.path.join(str(Path(__file__).parents[5]), 'mfs')
 
-    dir_path = os.path.join(mfs_path, 'pokemon_images')
+    dir_path = os.path.join(mfs_path, 'pokemon_images_original')
 
-    model_output_folder = 'model_scratch'
+    model_output_folder = 'model'
     model_output_path = os.path.join(str(Path(__file__).parents[0]), model_output_folder)
     if not os.path.exists(model_output_path):
         os.makedirs(model_output_path)
 
-    # test with McKale's drawn image
+    # test with a previously loaded image
     test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
 
     x = ImageRecognition(image_dir=dir_path, model_dir=model_output_path, test_img_path=test_img_path,
