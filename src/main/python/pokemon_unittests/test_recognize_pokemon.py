@@ -7,7 +7,7 @@ from pathlib import Path
 class ImageRecognitionUnitTests(unittest.TestCase):
     def setUp(self):
         self.model_path = os.path.join(str(Path(__file__).parents[1]), 'machine_learning', 'recognize_pokemon',
-                                       'model')
+                                       'model_demo')
         self.test_image_path = os.path.join(str(Path(__file__).parents[0]), 'pokemon_unittests_data', 'Charmander.png')
 
     def test_recognize(self):
