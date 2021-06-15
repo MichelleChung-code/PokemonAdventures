@@ -15,7 +15,5 @@ class ImageRecognitionUnitTests(unittest.TestCase):
 
         x = ImageRecognition(image_dir=False, model_dir=self.model_path, test_img_path=self.test_image_path,
                              run_stored_model_bool=True)
-        x()
-        hello = 'hello'
-        # todo fix model accuracy and then check that it predicts charmander
-        self.assertTrue(hello == 'hello')
+        res_dict = x()
+        self.assertEqual('Charmander', res_dict['FINAL_CHOICE'])
