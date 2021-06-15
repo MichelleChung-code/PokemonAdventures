@@ -95,7 +95,7 @@ if __name__ == '__main__':
         os.makedirs(model_output_path)
 
     # test with a previously loaded image
-    test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
+    test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Pikachu.png')
 
     x = ImageRecognition(image_dir=dir_path, model_dir=model_output_path, test_img_path=test_img_path,
                          run_stored_model_bool=True)
