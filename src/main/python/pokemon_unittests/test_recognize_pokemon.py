@@ -10,7 +10,7 @@ class ImageRecognitionUnitTests(unittest.TestCase):
                                        'model_demo')
 
     def test_recognize_pikachu(self):
-        test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Pikachu.png')
+        test_img_path = os.path.join(str(Path(__file__).parents[0]), 'pokemon_unittests_data', 'Pikachu.png')
 
         x = ImageRecognition(image_dir=False, model_dir=self.model_path, test_img_path=test_img_path,
                              run_stored_model_bool=True)
@@ -18,7 +18,7 @@ class ImageRecognitionUnitTests(unittest.TestCase):
         self.assertEqual('Pikachu', res_dict['FINAL_CHOICE'])
 
     def test_recognize_charmander(self):
-        test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
+        test_img_path = os.path.join(str(Path(__file__).parents[0]), 'pokemon_unittests_data', 'Charmander.png')
 
         x = ImageRecognition(image_dir=False, model_dir=self.model_path, test_img_path=test_img_path,
                              run_stored_model_bool=True)
@@ -26,7 +26,7 @@ class ImageRecognitionUnitTests(unittest.TestCase):
         self.assertEqual('Charmander', res_dict['FINAL_CHOICE'])
 
     def test_recognize_blastoise(self):
-        test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Blastoise.png')
+        test_img_path = os.path.join(str(Path(__file__).parents[0]), 'pokemon_unittests_data', 'Blastoise.png')
 
         x = ImageRecognition(image_dir=False, model_dir=self.model_path, test_img_path=test_img_path,
                              run_stored_model_bool=True)
