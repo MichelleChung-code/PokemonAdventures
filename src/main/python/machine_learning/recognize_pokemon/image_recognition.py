@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     # test the model with a previously loaded image
     # this will be the result to return
-    test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charizard.png')
+    test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
 
     x = ImageRecognition(image_dir=dir_path, model_dir=model_output_path, test_img_path=test_img_path,
                          run_stored_model_bool=True)
