@@ -49,7 +49,7 @@ class ImageRecognition:
         model = ClassificationModelTrainer()
         model.setModelTypeAsResNet50()
         model.setDataDirectory(self.image_dir, models_subdirectory=self.model_dir, json_subdirectory=self.model_dir)
-        model.trainModel(num_objects=self.n, num_experiments=50, enhance_data=True, batch_size=10,
+        model.trainModel(num_objects=self.n, num_experiments=100, enhance_data=True, batch_size=35,
                          show_network_summary=True)
 
     def run_stored_model(self):
@@ -89,10 +89,10 @@ if __name__ == '__main__':
     mfs_path = os.path.join(str(Path(__file__).parents[5]), 'mfs')
 
     # path for where training and test images are stored
-    dir_path = os.path.join(mfs_path, 'pokemon_images_demo')
+    dir_path = os.path.join(mfs_path, 'pokemon_images_starters')
 
     # path to where model h5 and json fils are stored/ to be written
-    model_output_folder = 'model_demo'
+    model_output_folder = 'model_starters'
     model_output_path = os.path.join(str(Path(__file__).parents[0]), model_output_folder)
     if not os.path.exists(model_output_path):
         os.makedirs(model_output_path)
@@ -102,5 +102,5 @@ if __name__ == '__main__':
     test_img_path = os.path.join(str(Path(__file__).parents[5]), 'images', 'Charmander.png')
 
     x = ImageRecognition(image_dir=dir_path, model_dir=model_output_path, test_img_path=test_img_path,
-                         run_stored_model_bool=True)
+                         run_stored_model_bool=False)
     pprint(x())
