@@ -5,7 +5,7 @@ from pathlib import Path
 import logging
 import copy
 import json
-from battle_simulation.battle_common import battle_log_msg
+from battle_simulation.battle_common import battle_log_msg, battle_timing_decorator
 import random
 
 
@@ -20,6 +20,7 @@ class Battle:
         self.Pokemon1 = Pokemon1
         self.Pokemon2 = Pokemon2
 
+    @battle_timing_decorator
     def execute_battle(self, user_input=False):
         """
         Runs the turn based auto-battle, randomized moves
@@ -50,7 +51,7 @@ class Battle:
 
         # User choices will be integers 1, 2, 3, or 4
         user_choice = input("Choose the move that {name} will use from {move_options}: ".format(name=self.Pokemon1.name,
-                                                                                           move_options=user_input_move_options_dict))
+                                                                                                move_options=user_input_move_options_dict))
 
         if self.Pokemon1.speed >= self.Pokemon2.speed:
             self.Pokemon1.use_move(self.Pokemon2, int(user_choice))
