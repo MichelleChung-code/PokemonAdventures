@@ -20,6 +20,15 @@ class Battle:
         self.Pokemon1 = Pokemon1
         self.Pokemon2 = Pokemon2
 
+    def __repr__(self):
+        """
+        Control the to-string conversion
+
+        !r in the string formatting to ensyre that output string uses repr(self.Pokemon1) and repr(self.Pokemon2)
+        instead of str(self.Pokemon1) and str(self.Pokemon2)
+        """
+        return f'{self.__class__.__name__}({self.Pokemon1!r}, {self.Pokemon2!r})'
+
     @battle_timing_decorator
     def execute_battle(self, user_input=False):
         """

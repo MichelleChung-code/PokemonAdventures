@@ -31,6 +31,12 @@ class Pokemon:
         if len(self.moveset.keys()) != 4:
             raise Exception('{name} moveset does not contain 4 moves.'.format(name=self.name))
 
+    def __repr__(self):
+        """
+        Control the to-string conversion
+        """
+        return f'{self.__class__.__name__}({self.name!r})'
+
     def apply_status_effect(self, other_pokemon):
         """
         Apply existing status effect on current pokemon.
