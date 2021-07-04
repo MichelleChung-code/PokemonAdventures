@@ -46,6 +46,10 @@ class BattleUnitTests(unittest.TestCase):
         self.assertEqual(dummy_mon_2.max_hp, dummy_2_max_hp, unittest_failure_msg('battle has changed pokemon max HP'))
 
     def test_mewtwo_vs_mew_probability(self):
+        """
+        Test the probability of Mewtwo winning over Mew
+        This unittest will be used to check whether results are changing per pull request
+        """
         Mew = copy.deepcopy(self.dummy_mon_1)
         Mewtwo = Pokemon('Mewtwo', self.pokemon_df, self.moveset_data['Mewtwo'], self.status_effect_df)
 
