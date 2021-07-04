@@ -5,7 +5,7 @@ from pathlib import Path
 import logging
 import copy
 import json
-from battle_simulation.battle_common import battle_log_msg, battle_timing_decorator
+from battle_simulation.battle_common import battle_log_msg, battle_timing_decorator, BattleError
 import random
 
 
@@ -49,6 +49,34 @@ class Battle:
         winner = self.Pokemon1.name if self.Pokemon1.hp > 0 else self.Pokemon2.name
         return winner
 
+    def select_run_pokemon_use_move(self, user_choice_idx=False, user_choice_move_nme=False):
+        """
+        Select which pokemon to move first and then run one turn of the battle.
+
+        Args:
+            user_choice_idx: <int> 1, 2, 3, or 4 of move selection if user_input selected.  Otherwise False for
+            random move to be selected.
+            user_choice_move_nme: <str> name of move associated with user_choice_idx if user_input selected.  Otherwise,
+            False
+        """
+        # use is instead of == since we don't want 0 to evaluate to True.  Test for identical objects here.
+        if user_choice_idx is False:
+            if user_choice_move_nme is not False:
+                raise BattleError('Both or neither user_choice_idx and user_choice_move_nme must be False')
+
+        if self.Pokemon1.speed >= self.Pokemon2.speed:
+            self.Pokemon1.use_move(self.Pokemon2, user_choice_idx)
+            if user_choice_idx:
+                print('{} was used'.format(user_choice_move_nme))
+            if self.Pokemon2.hp > 0:  # if Pokemon2 has fainted from the previous move
+                self.Pokemon2.use_move(self.Pokemon1)
+        else:
+            self.Pokemon2.use_move(self.Pokemon1)
+            if self.Pokemon1.hp > 0:
+                self.Pokemon1.use_move(self.Pokemon2, user_choice_idx)
+                if user_choice_idx:
+                    print('{} was used'.format(user_choice_move_nme))
+
     def battle_execute_turn_user_input(self):
         """
         Runs one turn of the battle through using user input
@@ -62,29 +90,14 @@ class Battle:
         user_choice = input("Choose the move that {name} will use from {move_options}: ".format(name=self.Pokemon1.name,
                                                                                                 move_options=user_input_move_options_dict))
 
-        if self.Pokemon1.speed >= self.Pokemon2.speed:
-            self.Pokemon1.use_move(self.Pokemon2, int(user_choice))
-            print('{} was used'.format(user_input_move_options_dict[user_choice]))
-            if self.Pokemon2.hp > 0:  # if Pokemon2 has fainted from the previous move
-                self.Pokemon2.use_move(self.Pokemon1)
-        else:
-            self.Pokemon2.use_move(self.Pokemon1)
-            if self.Pokemon1.hp > 0:
-                self.Pokemon1.use_move(self.Pokemon2, int(user_choice))
-                print('{} was used'.format(user_input_move_options_dict[user_choice]))
+        self.select_run_pokemon_use_move(user_choice_idx=int(user_choice),
+                                         user_choice_move_nme=user_input_move_options_dict[user_choice])
 
     def battle_execute_turn(self):
         """
         Runs one turn of the battle
         """
-        if self.Pokemon1.speed >= self.Pokemon2.speed:
-            self.Pokemon1.use_move(self.Pokemon2)
-            if self.Pokemon2.hp > 0:  # if Pokemon2 has fainted from the previous move
-                self.Pokemon2.use_move(self.Pokemon1)
-        else:
-            self.Pokemon2.use_move(self.Pokemon1)
-            if self.Pokemon1.hp > 0:
-                self.Pokemon1.use_move(self.Pokemon2)
+        self.select_run_pokemon_use_move(user_choice_idx=False, user_choice_move_nme=False)
 
 
 def experiment_winner(Battle, num_battles, name_expected_winner):
@@ -111,7 +124,10 @@ def experiment_winner(Battle, num_battles, name_expected_winner):
             successful_wins += 1
         print('Battle #{0} Winner: {1}'.format(i + 1, battle_winner))
 
-    return 'Probability of {0} winning: {1}'.format(name_expected_winner, successful_wins / num_battles)
+    winning_probability = successful_wins / num_battles
+    print('Probability of {0} winning: {1}'.format(name_expected_winner, winning_probability))
+
+    return winning_probability
 
 
 if __name__ == '__main__':
@@ -141,9 +157,10 @@ if __name__ == '__main__':
     # Don't include what was chosen as the first pokemon
 
     second_mon_name = random.choice(list(moveset_data.keys()))
+    second_mon_name = 'Mew'
     second_mon_moveset = moveset_data[second_mon_name]
     second_pokemon = Pokemon(second_mon_name, pokemon_df, second_mon_moveset, status_effect_df)
 
     battle = Battle(Mewtwo, second_pokemon)
-
-    print(experiment_winner(battle, 1000, 'Mewtwo'))
+    # battle.execute_battle(user_input=True)
+    experiment_winner(battle, 1000, 'Mewtwo')
