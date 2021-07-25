@@ -30,9 +30,10 @@ class Battle:
         return f'{self.__class__.__name__}({self.Pokemon1!r}, {self.Pokemon2!r})'
 
     @battle_timing_decorator
-    def execute_battle(self, user_input=False):
+    def execute_battle(self, *, user_input=False):
         """
         Runs the turn based auto-battle, randomized moves
+        * argument forces this method to require specification of the user_input keyword arg
 
         Args:
             user_input: <bool> if True, allow for user input for Pokemon1 moves.  If False, moves used will be random
