@@ -118,7 +118,7 @@ def experiment_winner(Battle, num_battles, name_expected_winner):
     for i in range(num_battles):
         battle_txt = ' Battle {} '.format(i + 1)
         num_equal_signs = (50 - len(battle_txt)) // 2
-        logging.info('=' * num_equal_signs + battle_txt + '=' * num_equal_signs)
+        battle_log_msg('=' * num_equal_signs + battle_txt + '=' * num_equal_signs)
         new_battle = copy.deepcopy(Battle)
         battle_winner = new_battle.execute_battle(user_input=False)
         if battle_winner == name_expected_winner:
@@ -135,8 +135,8 @@ if __name__ == '__main__':
     # set up logging
     battle_log = os.path.join(str(Path(__file__).parents[0]), 'results', 'battle_log.txt')
     logging.basicConfig(filename=battle_log, filemode='w',
-                        format='[%(name)s %(levelname)s] %(asctime)s.%(msecs)d - %(message)s',
-                        datefmt='%H:%M:%S',
+                        format='[%(name)s %(levelname)s User:%(user)s] %(asctime)s - %(message)s',
+                        datefmt="%m/%d/%Y %I:%M:%S %p",
                         level=logging.INFO)
 
     mfs_path = os.path.join(str(Path(__file__).parents[4]), 'mfs')

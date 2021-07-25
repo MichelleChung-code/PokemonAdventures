@@ -1,6 +1,9 @@
 import logging
 import time
 import functools
+import getpass
+
+ext_data = {'user': getpass.getuser()}
 
 
 class BattleError(Exception):
@@ -32,7 +35,7 @@ def battle_log_msg(msg):
     Args:
         msg: <str> message to log
     """
-    logging.info('>>> {}'.format(msg))
+    logging.info('>>> {}'.format(msg), extra=ext_data)
 
 
 def unittest_failure_msg(msg):
