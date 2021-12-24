@@ -125,13 +125,10 @@ if __name__ == '__main__':
     df_pokedex.columns = df_pokedex.columns.str.lower()
     relative_strength_attributes_dict = compute_percentiles(df_pokedex)
 
-    str_desc = 'strong hp'
-    get_relevant(df_pokedex, relative_strength_attributes_dict, str_desc)
-
     while True:
         str_desc = input('Enter some key attributes: ')
         if str_desc == 'exit':
             break
-        print(get_relevant(df_pokedex, relative_strength_attributes_dict, str_desc)['name'].values)
+        print(get_relevant(df_pokedex, relative_strength_attributes_dict, str_desc))
 
     print('YAY! :)')
