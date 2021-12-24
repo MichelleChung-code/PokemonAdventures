@@ -1,6 +1,7 @@
 import copy
 import difflib
 import os
+import unittest
 from pathlib import Path
 
 import pandas as pd
@@ -48,7 +49,7 @@ def get_relevant(df_pokedex, dict_relative_attr_strength, attribute_desc):
         attribute_desc: <str> input attributes separated by commas
 
     Returns:
-        <pd.DataFrame> filtered dataframe
+        <list> relevent pokemon meeting the input condition
     """
     ls_diff_attributes = attribute_desc.split(',')
     ls_diff_attributes = [x.strip() for x in ls_diff_attributes]
@@ -87,8 +88,32 @@ def get_relevant(df_pokedex, dict_relative_attr_strength, attribute_desc):
         str_bool_ls.append(f'{v[0]} <= {k} <= {v[1]}')
 
     str_bool = ' and '.join(str_bool_ls)
+    df_filtered = df_pokedex.loc[df_pokedex.eval(str_bool)]
 
-    return df_pokedex.loc[df_pokedex.eval(str_bool)].sort_values('name')
+    return sorted(list(set(df_filtered.name.values)))
+
+
+class PokedexSubset(unittest.TestCase):
+
+    def test_expected_result(self):
+        """ Simple unittest that we return expected results """
+        mfs_path = os.path.join(str(Path(__file__).parents[0]), '../../../../mfs')
+        pokedex_data = os.path.join(mfs_path, 'pokedex_data.csv')
+        df_pokedex = pd.read_csv(pokedex_data, index_col=0)
+
+        str_desc = 'average hp'
+        lb = df_pokedex['HP'].quantile(0.5)
+        ub = df_pokedex['HP'].quantile(0.75)
+
+        expected = df_pokedex.loc[df_pokedex['HP'].between(lb, ub, inclusive=True)]
+        expected = sorted(list(set(expected['Name'].values)))
+
+        df_pokedex.columns = df_pokedex.columns.str.lower()
+        relative_strength_attributes_dict = compute_percentiles(df_pokedex)
+
+        res = get_relevant(df_pokedex, relative_strength_attributes_dict, str_desc)
+
+        self.assertEqual(expected, res)
 
 
 if __name__ == '__main__':
