@@ -20,6 +20,15 @@ PERCENTILES_MAP = dict(sorted(PERCENTILES_MAP.items(), key=lambda item: item[1])
 
 
 def compute_percentiles(df_pokedex):
+    """
+    Get percentile values per stat type to map to a relative strength
+
+    Args:
+        df_pokedex: <pd.DataFrame> containing the pokedex data
+
+    Returns:
+        <dict> of relative strength keys and dataframe values for the lower bound value per stat type
+    """
     dict_map_strength = copy.deepcopy(PERCENTILES_MAP)
     df_pokedex = df_pokedex[STAT_COLS_LOWER]
 
@@ -30,6 +39,17 @@ def compute_percentiles(df_pokedex):
 
 
 def get_relevant(df_pokedex, dict_relative_attr_strength, attribute_desc):
+    """
+    Filter the pokedex with the given input attributes
+
+    Args:
+        df_pokedex: <pd.DataFrame> containing the pokedex data
+        dict_relative_attr_strength: <dict> of relative strength keys and dataframe values for the lower bound value per stat type
+        attribute_desc: <str> input attributes separated by commas
+
+    Returns:
+        <pd.DataFrame> filtered dataframe
+    """
     ls_diff_attributes = attribute_desc.split(',')
     ls_diff_attributes = [x.strip() for x in ls_diff_attributes]
     dict_actual_attr = {''.join(x.split(' ')[1:]): x.split(' ')[0] for x in ls_diff_attributes}
@@ -80,10 +100,13 @@ if __name__ == '__main__':
     df_pokedex.columns = df_pokedex.columns.str.lower()
     relative_strength_attributes_dict = compute_percentiles(df_pokedex)
 
+    str_desc = 'strong hp'
+    get_relevant(df_pokedex, relative_strength_attributes_dict, str_desc)
+
     while True:
         str_desc = input('Enter some key attributes: ')
         if str_desc == 'exit':
             break
-        print(get_relevant(df_pokedex,relative_strength_attributes_dict, str_desc)['name'].values)
+        print(get_relevant(df_pokedex, relative_strength_attributes_dict, str_desc)['name'].values)
 
     print('YAY! :)')
