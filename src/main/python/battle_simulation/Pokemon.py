@@ -1,6 +1,7 @@
-import battle_simulation.constants as const
 import random
-from battle_simulation.battle_common import battle_log_msg, BattleError
+
+import src.main.python.battle_simulation.constants as const
+from src.main.python.battle_simulation.battle_common import battle_log_msg, BattleError
 
 
 class Pokemon:
