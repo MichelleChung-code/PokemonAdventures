@@ -1,7 +1,8 @@
-from machine_learning.recognize_pokemon.image_recognition import ImageRecognition
-import unittest
 import os
+import unittest
 from pathlib import Path
+
+from src.main.python.machine_learning.recognize_pokemon.image_recognition import ImageRecognition
 
 
 class ImageRecognitionUnitTests(unittest.TestCase):
@@ -16,7 +17,6 @@ class ImageRecognitionUnitTests(unittest.TestCase):
                              run_stored_model_bool=True)
         res_dict = x()
         self.assertEqual('Bulbasaur', res_dict['FINAL_CHOICE'])
-
 
     # todo work on a model that passes the next two unittests
     # def test_recognize_charmander(self):

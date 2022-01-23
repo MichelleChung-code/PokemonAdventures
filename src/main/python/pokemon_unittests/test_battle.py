@@ -1,13 +1,15 @@
-from battle_simulation.Pokemon import Pokemon
-from battle_simulation.Battle import Battle, experiment_winner
-import os
-import pandas as pd
-from pathlib import Path
 import copy
 import json
-from battle_simulation.battle_common import unittest_failure_msg
-import unittest
+import os
 import random
+import unittest
+from pathlib import Path
+
+import pandas as pd
+
+from src.main.python.battle_simulation.Battle import Battle, experiment_winner
+from src.main.python.battle_simulation.Pokemon import Pokemon
+from src.main.python.battle_simulation.battle_common import unittest_failure_msg
 
 
 class BattleUnitTests(unittest.TestCase):

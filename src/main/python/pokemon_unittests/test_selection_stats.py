@@ -1,8 +1,10 @@
-from selection_stats_basis import StatsBasedTeam
-import unittest
 import os
+import unittest
 from pathlib import Path
+
 import pandas as pd
+
+from src.main.python.selection_stats_basis import StatsBasedTeam
 
 
 class SelectionUnitTests(unittest.TestCase):
