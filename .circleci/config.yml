@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.9
+      - image: circleci/python:3.7
     steps:
       - checkout
       - restore_cache:
@@ -17,7 +17,7 @@ jobs:
           paths:
             - "venv"
       - run:
-          name: Running Unittests
+          name: Running Pokemon Unittests
           command: |
             . venv/bin/activate
             python3 -m unittest discover ~/project/src/main/python/pokemon_unittests
