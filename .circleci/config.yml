@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  Pokemon Unittests:
+  pokemon_unittests:
     docker:
       - image: circleci/python:3.7
     steps:
